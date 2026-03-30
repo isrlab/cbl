@@ -1,0 +1,98 @@
+{
+  "schema_version": "0.1",
+  "system_name": { "value": "TrafficLight", "provenance": "user_stated", "source": "traffic light controller" },
+  "assumes": [
+    { "name": { "value": "timer_expired", "provenance": "user_stated" }, "atype": { "value": "boolean", "provenance": "user_stated" }, "constraint": { "value": null, "provenance": "user_stated" }, "source": "timer signal" },
+    { "name": { "value": "pedestrian_request", "provenance": "user_stated" }, "atype": { "value": "boolean", "provenance": "user_stated" }, "constraint": { "value": null, "provenance": "user_stated" }, "source": "pedestrian button" }
+  ],
+  "definitions": [],
+  "constants": [
+    { "name": { "value": "cycle_time", "provenance": "user_stated" }, "ctype": { "value": "integer", "provenance": "user_stated" }, "cvalue": { "value": 30, "provenance": "user_stated" }, "source": "30 second cycle" }
+  ],
+  "guarantees": [
+    { "name": { "value": "light_color", "provenance": "user_stated" }, "gtype": { "value": "{red, yellow, green}", "provenance": "user_stated" }, "default": null, "source": "traffic light output" },
+    { "name": { "value": "walk_signal", "provenance": "user_stated" }, "gtype": { "value": "boolean", "provenance": "user_stated" }, "default": { "value": { "kind": "value", "value": false }, "provenance": "user_stated" }, "source": "pedestrian walk signal" }
+  ],
+  "variables": [],
+  "always_invariants": [],
+  "initial_mode": { "value": "Green", "provenance": "user_stated", "source": "starts in green" },
+  "modes": [
+    {
+      "name": { "value": "Green", "provenance": "user_stated" },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": { "value": { "when": { "kind": "is_true", "expr": { "kind": "var", "name": "timer_expired" } } }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "light_color", "value": { "kind": "string", "value": "yellow" }, "provenance": "user_stated", "source": null },
+            { "kind": "set", "name": "walk_signal", "value": { "kind": "bool", "value": false }, "provenance": "user_stated", "source": null }
+          ],
+          "target": { "value": { "transition_to": "Yellow" }, "provenance": "user_stated" },
+          "source": "when timer expires, go to yellow"
+        },
+        {
+          "guard": { "value": { "otherwise": true }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "light_color", "value": { "kind": "string", "value": "green" }, "provenance": "user_stated", "source": null }
+          ],
+          "target": { "value": { "remain": true }, "provenance": "user_stated" },
+          "source": "otherwise stay green"
+        }
+      ],
+      "source": null
+    },
+    {
+      "name": { "value": "Yellow", "provenance": "user_stated" },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": { "value": { "when": { "kind": "is_true", "expr": { "kind": "var", "name": "timer_expired" } } }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "light_color", "value": { "kind": "string", "value": "red" }, "provenance": "user_stated", "source": null },
+            { "kind": "set", "name": "walk_signal", "value": { "kind": "bool", "value": true }, "provenance": "user_stated", "source": null }
+          ],
+          "target": { "value": { "transition_to": "Red" }, "provenance": "user_stated" },
+          "source": "when timer expires, go to red"
+        },
+        {
+          "guard": { "value": { "otherwise": true }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "light_color", "value": { "kind": "string", "value": "yellow" }, "provenance": "user_stated", "source": null }
+          ],
+          "target": { "value": { "remain": true }, "provenance": "user_stated" },
+          "source": "otherwise stay yellow"
+        }
+      ],
+      "source": null
+    },
+    {
+      "name": { "value": "Red", "provenance": "user_stated" },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": { "value": { "when": { "kind": "is_true", "expr": { "kind": "var", "name": "timer_expired" } } }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "light_color", "value": { "kind": "string", "value": "green" }, "provenance": "user_stated", "source": null },
+            { "kind": "set", "name": "walk_signal", "value": { "kind": "bool", "value": false }, "provenance": "user_stated", "source": null }
+          ],
+          "target": { "value": { "transition_to": "Green" }, "provenance": "user_stated" },
+          "source": "when timer expires, go to green"
+        },
+        {
+          "guard": { "value": { "otherwise": true }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "light_color", "value": { "kind": "string", "value": "red" }, "provenance": "user_stated", "source": null },
+            { "kind": "set", "name": "walk_signal", "value": { "kind": "bool", "value": true }, "provenance": "user_stated", "source": null }
+          ],
+          "target": { "value": { "remain": true }, "provenance": "user_stated" },
+          "source": "otherwise stay red"
+        }
+      ],
+      "source": null
+    }
+  ],
+  "open_questions": []
+}

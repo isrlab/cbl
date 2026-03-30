@@ -1,0 +1,36 @@
+# Dune build artifacts
+_build/
+*.install
+
+# OCaml artifacts
+*.cmi
+*.cmo
+*.cmx
+*.cmt
+*.cmti
+*.o
+*.a
+*.so
+*.cmxs
+*.annot
+*.exe
+
+# Parser/Lexer generated files (keep in source for debugging)
+# lib/parser.ml
+# lib/parser.mli
+# lib/lexer.ml
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Opam/merlin
+_opam/
+.merlin
+
+# Test outputs
+*.json

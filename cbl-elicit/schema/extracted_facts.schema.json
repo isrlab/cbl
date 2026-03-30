@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extracted_facts.schema.json",
+  "title": "CBL Extracted Facts",
+  "description": "Schema for extracted_facts.json — Layer 1 output from LLM fact extraction.",
+  "type": "object",
+  "required": ["schema_version"],
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "provenance_attested": { "type": "boolean" },
+    "system_name": { "$ref": "#/$defs/provenanced_string" },
+    "assumes":     { "type": "array", "items": { "$ref": "#/$defs/assumption_fact" } },
+    "definitions": { "type": "array", "items": { "$ref": "#/$defs/definition_fact" } },
+    "constants":   { "type": "array", "items": { "$ref": "#/$defs/constant_fact" } },
+    "guarantees":  { "type": "array", "items": { "$ref": "#/$defs/guarantee_fact" } },
+    "variables":   { "type": "array", "items": { "$ref": "#/$defs/variable_fact" } },
+    "always_invariants": { "type": "array", "items": { "$ref": "#/$defs/invariant_fact" } },
+    "initial_mode": { "$ref": "#/$defs/provenanced_string" },
+    "modes":       { "type": "array", "items": { "$ref": "#/$defs/mode_fact" } },
+    "open_questions": { "type": "array", "items": { "$ref": "#/$defs/question" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "provenance_tag": {
+      "type": "string",
+      "enum": ["user_stated", "user_confirmed", "llm_inferred", "rule_derived", "rule_derived_pending", "default_assumed", "user_rejected"]
+    },
+    "provenanced_value": {
+      "type": "object",
+      "required": ["value", "provenance"],
+      "properties": {
+        "value":      {},
+        "provenance": { "$ref": "#/$defs/provenance_tag" }
+      },
+      "additionalProperties": false
+    },
+    "provenanced_string": {
+      "type": "object",
+      "required": ["value", "provenance"],
+      "properties": {
+        "value":      { "type": "string" },
+        "provenance": { "$ref": "#/$defs/provenance_tag" },
+        "source":     { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "cbl_type": {
+      "type": "string",
+      "pattern": "^(boolean|integer(\\[(-?\\d+|inf|-inf)\\.\\.(-?\\d+|inf|-inf)\\])?|real(\\[(-?\\d+|inf|-inf)\\.\\.(-?\\d+|inf|-inf)\\])?|\\{[a-zA-Z_][a-zA-Z0-9_]*(,\\s*[a-zA-Z_][a-zA-Z0-9_]*)*\\})$"
+    },
+    "assumption_fact": {
+      "type": "object",
+      "required": ["name", "atype"],
+      "properties": {
+        "name":       { "$ref": "#/$defs/provenanced_string" },
+        "atype":      {
+          "type": "object",
+          "required": ["value", "provenance"],
+          "properties": {
+            "value":      { "$ref": "#/$defs/cbl_type" },
+            "provenance": { "$ref": "#/$defs/provenance_tag" }
+          },
+          "additionalProperties": false
+        },
+        "constraint": { "$ref": "#/$defs/provenanced_value" },
+        "source":     { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "constant_fact": {
+      "type": "object",
+      "required": ["name", "ctype", "cvalue"],
+      "properties": {
+        "name":   { "$ref": "#/$defs/provenanced_string" },
+        "ctype":  {
+          "type": "object",
+          "required": ["value", "provenance"],
+          "properties": {
+            "value":      { "$ref": "#/$defs/cbl_type" },
+            "provenance": { "$ref": "#/$defs/provenance_tag" }
+          },
+          "additionalProperties": false
+        },
+        "cvalue": { "$ref": "#/$defs/provenanced_value" },
+        "source": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "guarantee_fact": {
+      "type": "object",
+      "required": ["name", "gtype"],
+      "properties": {
+        "name":    { "$ref": "#/$defs/provenanced_string" },
+        "gtype":   {
+          "type": "object",
+          "required": ["value", "provenance"],
+          "properties": {
+            "value":      { "$ref": "#/$defs/cbl_type" },
+            "provenance": { "$ref": "#/$defs/provenance_tag" }
+          },
+          "additionalProperties": false
+        },
+        "default": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["value", "provenance"],
+              "properties": {
+                "value": {
+                  "oneOf": [
+                    { "type": "null" },
+                    { "type": "object",
+                      "required": ["kind"],
+                      "properties": {
+                        "kind":  { "enum": ["hold", "value"] },
+                        "value": {}
+                      },
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "provenance": { "$ref": "#/$defs/provenance_tag" }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "source":  { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "variable_fact": {
+      "type": "object",
+      "required": ["name", "vtype"],
+      "properties": {
+        "name":    { "$ref": "#/$defs/provenanced_string" },
+        "vtype":   {
+          "type": "object",
+          "required": ["value", "provenance"],
+          "properties": {
+            "value":      { "$ref": "#/$defs/cbl_type" },
+            "provenance": { "$ref": "#/$defs/provenance_tag" }
+          },
+          "additionalProperties": false
+        },
+        "initial": { "$ref": "#/$defs/provenanced_value" },
+        "source":  { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "definition_fact": {
+      "type": "object",
+      "required": ["name", "body"],
+      "properties": {
+        "name":   { "$ref": "#/$defs/provenanced_string" },
+        "body":   { "$ref": "#/$defs/provenanced_value" },
+        "source": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "invariant_fact": {
+      "type": "object",
+      "required": ["predicate"],
+      "properties": {
+        "predicate": { "$ref": "#/$defs/provenanced_value" },
+        "source":    { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "guard": {
+      "oneOf": [
+        { "type": "object", "required": ["when"], "properties": { "when": {} }, "additionalProperties": false },
+        { "type": "object", "required": ["otherwise"], "properties": { "otherwise": { "const": true } }, "additionalProperties": false }
+      ]
+    },
+    "target": {
+      "oneOf": [
+        { "type": "object", "required": ["transition_to"], "properties": { "transition_to": { "type": "string" } }, "additionalProperties": false },
+        { "type": "object", "required": ["remain"], "properties": { "remain": { "const": true } }, "additionalProperties": false }
+      ]
+    },
+    "action_fact": {
+      "type": "object",
+      "required": ["kind", "name"],
+      "properties": {
+        "kind":  { "enum": ["set", "hold", "increment", "reset"] },
+        "name":  { "type": "string" },
+        "value": {},
+        "provenance": { "$ref": "#/$defs/provenance_tag" },
+        "source": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "transition_fact": {
+      "type": "object",
+      "required": ["guard", "actions", "target"],
+      "properties": {
+        "guard":   {
+          "type": "object",
+          "required": ["value", "provenance"],
+          "properties": {
+            "value":      { "$ref": "#/$defs/guard" },
+            "provenance": { "$ref": "#/$defs/provenance_tag" }
+          },
+          "additionalProperties": false
+        },
+        "actions": { "type": "array", "items": { "$ref": "#/$defs/action_fact" } },
+        "target":  {
+          "type": "object",
+          "required": ["value", "provenance"],
+          "properties": {
+            "value":      { "$ref": "#/$defs/target" },
+            "provenance": { "$ref": "#/$defs/provenance_tag" }
+          },
+          "additionalProperties": false
+        },
+        "source":  { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "mode_fact": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name":          { "$ref": "#/$defs/provenanced_string" },
+        "entry_actions": { "type": "array", "items": { "$ref": "#/$defs/action_fact" } },
+        "invariants":    { "type": "array", "items": { "$ref": "#/$defs/invariant_fact" } },
+        "transitions":   { "type": "array", "items": { "$ref": "#/$defs/transition_fact" } },
+        "source":        { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "question": {
+      "type": "object",
+      "required": ["question_id", "text", "relates_to", "category"],
+      "properties": {
+        "question_id":     { "type": "string" },
+        "text":            { "type": "string" },
+        "relates_to":      { "type": "string" },
+        "category":        { "type": "string" },
+        "suggested_options": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

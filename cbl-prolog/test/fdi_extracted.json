@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1",
+  "provenance_attested": true,
+  "system_name": { "value": "TripleSensorFDI", "provenance": "llm_inferred", "source": null },
+  "assumes": [
+    { "name": { "value": "s1", "provenance": "user_stated" }, "atype": { "value": "real", "provenance": "user_stated" }, "constraint": { "value": null, "provenance": "user_stated" }, "source": "three redundant sensors s1, s2, s3" },
+    { "name": { "value": "s2", "provenance": "user_stated" }, "atype": { "value": "real", "provenance": "user_stated" }, "constraint": { "value": null, "provenance": "user_stated" }, "source": "three redundant sensors s1, s2, s3" },
+    { "name": { "value": "s3", "provenance": "user_stated" }, "atype": { "value": "real", "provenance": "user_stated" }, "constraint": { "value": null, "provenance": "user_stated" }, "source": "three redundant sensors s1, s2, s3" },
+    { "name": { "value": "threshold", "provenance": "user_stated" }, "atype": { "value": "real", "provenance": "user_stated" }, "constraint": { "value": null, "provenance": "user_stated" }, "source": "threshold parameter for deviation detection" }
+  ],
+  "definitions": [],
+  "constants": [
+    { "name": { "value": "n_fault", "provenance": "llm_inferred" }, "ctype": { "value": "integer", "provenance": "llm_inferred" }, "cvalue": { "value": 5, "provenance": "user_stated" }, "source": "5 consecutive cycles" }
+  ],
+  "guarantees": [
+    { "name": { "value": "fused_value", "provenance": "user_stated" }, "gtype": { "value": "real", "provenance": "user_stated" }, "default": { "value": { "kind": "hold" }, "provenance": "llm_inferred" }, "source": "outputs a fused value" },
+    { "name": { "value": "status", "provenance": "user_stated" }, "gtype": { "value": "{all_healthy, s1_isolated}", "provenance": "llm_inferred" }, "default": null, "source": "status indicator" }
+  ],
+  "variables": [],
+  "always_invariants": [],
+  "initial_mode": { "value": "all_healthy", "provenance": "llm_inferred", "source": "In normal mode" },
+  "modes": [
+    {
+      "name": { "value": "all_healthy", "provenance": "llm_inferred" },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": { "value": { "when": { "kind": "for_n_cycles", "n": { "kind": "var", "name": "n_fault" }, "base": { "kind": "deviates", "value": { "kind": "var", "name": "s1" }, "references": [{ "kind": "var", "name": "s2" }, { "kind": "var", "name": "s3" }], "threshold": { "kind": "var", "name": "threshold" } } } }, "provenance": "user_stated" },
+          "actions": [
+            { "kind": "set", "name": "fused_value", "value": { "kind": "average", "operands": [{ "kind": "var", "name": "s2" }, { "kind": "var", "name": "s3" }] }, "provenance": "user_stated", "source": "use the average of s2 and s3" },
+            { "kind": "set", "name": "status", "value": { "kind": "string", "value": "s1_isolated" }, "provenance": "llm_inferred", "source": null }
+          ],
+          "target": { "value": { "transition_to": "s1_isolated" }, "provenance": "llm_inferred" },
+          "source": "If sensor s1 deviates... isolate it"
+        },
+        {
+          "guard": { "value": { "otherwise": true }, "provenance": "llm_inferred" },
+          "actions": [
+            { "kind": "set", "name": "fused_value", "value": { "kind": "median", "operands": [{ "kind": "var", "name": "s1" }, { "kind": "var", "name": "s2" }, { "kind": "var", "name": "s3" }] }, "provenance": "user_stated", "source": "fused value is the median of all three sensors" },
+            { "kind": "set", "name": "status", "value": { "kind": "string", "value": "all_healthy" }, "provenance": "llm_inferred", "source": null }
+          ],
+          "target": { "value": { "remain": true }, "provenance": "llm_inferred" },
+          "source": "In normal mode"
+        }
+      ],
+      "source": null
+    },
+    {
+      "name": { "value": "s1_isolated", "provenance": "llm_inferred" },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [],
+      "source": null
+    }
+  ],
+  "open_questions": [
+    {
+      "question_id": "q1",
+      "text": "What transitions should occur in the s1_isolated mode? Can the system return to all_healthy?",
+      "relates_to": "s1_isolated",
+      "category": "missing_transition",
+      "suggested_options": ["Remain isolated permanently", "Return to all_healthy when s1 agrees with others"]
+    }
+  ]
+}

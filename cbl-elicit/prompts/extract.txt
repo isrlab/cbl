@@ -1,0 +1,10 @@
+Extract structured facts from the following natural-language requirements into CBL extracted_facts JSON format.
+
+Requirements:
+---
+{nl_text}
+---
+
+Follow the schema exactly. Every provenanced field must have {{"value": ..., "provenance": "..."}}. Use "user_stated" for facts directly from the text, "llm_inferred" for anything you infer. Include an Otherwise transition in every mode. Include "source" fields tracing each fact to the requirements text.
+
+Return ONLY the JSON object. No markdown, no explanation.

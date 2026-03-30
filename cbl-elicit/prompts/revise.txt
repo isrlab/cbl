@@ -1,0 +1,18 @@
+Your previous extraction had issues. Revise it based on the diagnostics and engineer answers below.
+
+Original requirements:
+---
+{nl_text}
+---
+
+Diagnostics from the reasoning engine:
+{diagnostics}
+
+Engineer answers to questions:
+{answers}
+
+Previous verdict status: {verdict_status}
+
+Fix all errors. Preserve facts that had no issues. For any new facts you add, use "llm_inferred" provenance. For facts the engineer confirmed via answers, keep "user_stated" or the appropriate tag.
+
+Return ONLY the complete revised extracted_facts JSON. No markdown, no explanation.

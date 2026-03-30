@@ -1,0 +1,4 @@
+(executable
+ (name cblc)
+ (public_name cblc)
+ (libraries cbl_lib))

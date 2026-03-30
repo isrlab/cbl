@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "verdict.schema.json",
+  "title": "CBL Verdict",
+  "description": "Schema for verdict.json — Layer 2 output from Prolog reasoning engine.",
+  "type": "object",
+  "required": ["schema_version", "status", "diagnostics", "repairs", "questions"],
+  "properties": {
+    "schema_version": { "const": "0.1" },
+    "status": { "enum": ["pass", "fail", "incomplete"] },
+    "diagnostics": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/diagnostic" }
+    },
+    "repairs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/repair" }
+    },
+    "questions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/question" }
+    },
+    "committed_facts": { "$ref": "#/$defs/fact_partition" },
+    "pending_facts":   { "$ref": "#/$defs/fact_partition" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "diagnostic": {
+      "type": "object",
+      "required": ["severity", "code", "message", "location"],
+      "properties": {
+        "severity": { "enum": ["error", "warning"] },
+        "code":     { "type": "string" },
+        "message":  { "type": "string" },
+        "location": {
+          "type": "object",
+          "required": ["kind", "name"],
+          "properties": {
+            "kind":           { "type": "string" },
+            "name":           { "type": "string" },
+            "transition_idx": { "type": ["integer", "null"] }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "repair_action": {
+      "type": "object",
+      "required": ["action"],
+      "properties": {
+        "action":         { "type": "string" },
+        "mode":           { "type": "string" },
+        "name":           { "type": "string" },
+        "guard":          {},
+        "actions":        { "type": "array" },
+        "target":         {},
+        "transition_idx": { "type": "integer" },
+        "action_to_add":  {},
+        "candidates":     { "type": "array", "items": { "type": "string" } },
+        "value":          {},
+        "kind":           { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "repair": {
+      "type": "object",
+      "required": ["for_diagnostic", "action", "provenance", "requires_confirmation"],
+      "properties": {
+        "for_diagnostic":       { "type": "string" },
+        "action":               { "$ref": "#/$defs/repair_action" },
+        "provenance":           { "type": "string" },
+        "requires_confirmation": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "question": {
+      "type": "object",
+      "required": ["question_id", "text", "relates_to", "category"],
+      "properties": {
+        "question_id":     { "type": "string" },
+        "text":            { "type": "string" },
+        "relates_to":      { "type": "string" },
+        "category":        { "type": "string" },
+        "suggested_options": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "fact_partition": {
+      "type": "object",
+      "properties": {
+        "schema_version": { "type": "string" },
+        "system_name":    {},
+        "assumes":        { "type": "array" },
+        "constants":      { "type": "array" },
+        "guarantees":     { "type": "array" },
+        "variables":      { "type": "array" },
+        "definitions":        { "type": "array" },
+        "always_invariants":  { "type": "array" },
+        "modes":              { "type": "array" },
+        "initial_mode":       {}
+      },
+      "additionalProperties": false
+    }
+  }
+}

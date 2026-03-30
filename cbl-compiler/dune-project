@@ -1,0 +1,23 @@
+(lang dune 3.0)
+(using menhir 2.1)
+(name cbl)
+(version 0.1.0)
+
+(generate_opam_files true)
+
+(source (github isrlab/cbl))
+(authors "ISR Lab")
+(maintainers "isrlab")
+
+(package
+ (name cbl)
+ (synopsis "CBL (Controlled Behavioral Language) compiler")
+ (description "Compiler for CBL specifications targeting Stateflow and SCADE")
+ (depends
+  (ocaml (>= 4.14))
+  dune
+  (menhir (>= 20230415))
+  (yojson (>= 2.1))
+  (ppx_deriving (>= 5.2))
+  (ppx_deriving_yojson (>= 3.7))
+  (z3 (>= 4.8))))

@@ -1,0 +1,22 @@
+# CBL Elicitation Configuration
+# CLI flags override values in this file.
+
+[session]
+max_iterations = 10
+schema_retries = 3
+stall_threshold = 2          # consecutive no-progress iterations before stall
+
+[tools]
+swipl = "swipl"
+cblc  = "cblc"
+
+[mitigations]
+back_translation  = true
+traceability      = true
+dual_extraction   = false
+
+[agents]
+# Agent names (from .github/agents/*.agent.md) to inject into LLM prompts.
+# These shape the LLM's extraction behavior with domain/pipeline knowledge.
+# Override per-run with --agents on the CLI.
+inject = []  # e.g., ["domain-fdi", "requirements-analyst"]

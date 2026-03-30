@@ -1,0 +1,157 @@
+{
+  "schema_version": "0.1",
+  "committed_facts": {
+    "assumes": [
+      {"atype":"real","name":"s1","provenance":"user_stated"},
+      {"atype":"real","name":"s2","provenance":"user_stated"},
+      {"atype":"real","name":"s3","provenance":"user_stated"},
+      {"atype":"real","name":"threshold","provenance":"user_stated"}
+    ],
+    "constants": [],
+    "guarantees": [
+      {"gtype":"real","name":"fused_value","provenance":"user_stated"},
+      {
+	"gtype":"{all_healthy, s1_isolated}",
+	"name":"status",
+	"provenance":"user_stated"
+      }
+    ],
+    "initial_mode":null,
+    "modes": [],
+    "schema_version":"0.1",
+    "system_name":null,
+    "variables": []
+  },
+  "diagnostics": [
+    {
+      "code":"empty_mode",
+      "location": {"kind":"mode","name":"s1_isolated","transition_idx":null},
+      "message":"Mode 's1_isolated' has no transitions",
+      "severity":"error"
+    },
+    {
+      "code":"unconfirmed",
+      "location": {"kind":"constant","name":"n_fault","transition_idx":null},
+      "message":"LLM inferred constant 'n_fault'",
+      "severity":"warning"
+    },
+    {
+      "code":"unconfirmed",
+      "location": {"kind":"mode","name":"all_healthy","transition_idx":null},
+      "message":"LLM inferred mode 'all_healthy'",
+      "severity":"warning"
+    },
+    {
+      "code":"unconfirmed",
+      "location": {"kind":"mode","name":"s1_isolated","transition_idx":null},
+      "message":"LLM inferred mode 's1_isolated'",
+      "severity":"warning"
+    },
+    {
+      "code":"unconfirmed_default",
+      "location": {"kind":"guarantee","name":"fused_value","transition_idx":null},
+      "message":"LLM inferred default for guarantee 'fused_value'",
+      "severity":"warning"
+    }
+  ],
+  "pending_facts": {
+    "assumes": [],
+    "constants": [
+      {
+	"ctype":"integer",
+	"cvalue":5,
+	"name":"n_fault",
+	"provenance":"llm_inferred"
+      }
+    ],
+    "guarantees": [],
+    "initial_mode": {"provenance":"llm_inferred","value":"all_healthy"},
+    "modes": [
+      {"name":"all_healthy","provenance":"llm_inferred"},
+      {"name":"s1_isolated","provenance":"llm_inferred"}
+    ],
+    "schema_version":"0.1",
+    "system_name":"TripleSensorFDI",
+    "variables": []
+  },
+  "questions": [
+    {
+      "category":"missing_transition",
+      "question_id":"q1",
+      "relates_to":"s1_isolated",
+      "suggested_options": [
+	"Remain isolated permanently",
+	"Return to all_healthy when s1 agrees with others"
+      ],
+      "text":"What transitions should occur in the s1_isolated mode? Can the system return to all_healthy?"
+    },
+    {
+      "category":"confirm_inference",
+      "question_id":"repair_confirm_n_fault",
+      "relates_to":"n_fault",
+      "suggested_options": ["Yes", "No" ],
+      "text":"The LLM inferred constant 'n_fault'. Is this correct?"
+    },
+    {
+      "category":"confirm_inference",
+      "question_id":"repair_confirm_all_healthy",
+      "relates_to":"all_healthy",
+      "suggested_options": ["Yes", "No" ],
+      "text":"The LLM inferred mode 'all_healthy'. Is this correct?"
+    },
+    {
+      "category":"confirm_inference",
+      "question_id":"repair_confirm_s1_isolated",
+      "relates_to":"s1_isolated",
+      "suggested_options": ["Yes", "No" ],
+      "text":"The LLM inferred mode 's1_isolated'. Is this correct?"
+    },
+    {
+      "category":"confirm_default",
+      "question_id":"repair_confirm_default_fused_value",
+      "relates_to":"fused_value",
+      "suggested_options": ["Yes", "No" ],
+      "text":"The LLM inferred a default for guarantee 'fused_value'. Is this correct?"
+    }
+  ],
+  "repairs": [
+    {
+      "action": {
+	"action":"add_transition",
+	"actions": [ {"kind":"hold","name":"status"} ],
+	"guard": {"otherwise":true},
+	"mode":"s1_isolated",
+	"target": {"remain":true}
+      },
+      "for_diagnostic":"empty_mode(s1_isolated)",
+      "provenance":"rule_derived",
+      "requires_confirmation":true
+    },
+    {
+      "action": {"action":"ask_user","name":"n_fault"},
+      "for_diagnostic":"unconfirmed(n_fault,constant)",
+      "provenance":"rule_derived",
+      "requires_confirmation":true
+    },
+    {
+      "action": {"action":"ask_user","name":"all_healthy"},
+      "for_diagnostic":"unconfirmed(all_healthy,mode)",
+      "provenance":"rule_derived",
+      "requires_confirmation":true
+    },
+    {
+      "action": {"action":"ask_user","name":"s1_isolated"},
+      "for_diagnostic":"unconfirmed(s1_isolated,mode)",
+      "provenance":"rule_derived",
+      "requires_confirmation":true
+    },
+    {
+      "action": {"action":"ask_user","name":"fused_value"},
+      "for_diagnostic":"unconfirmed_default(fused_value)",
+      "provenance":"rule_derived",
+      "requires_confirmation":true
+    }
+  ],
+  "schema_version":"0.1",
+  "status":"fail"
+}
