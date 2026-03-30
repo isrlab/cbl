@@ -96,7 +96,7 @@ The compiler is structured in classic phases:
 
 ## Note on Python Prototype
 
-The original Python prototype (Lark parser, Python checker) has been archived at `_archive/cbl-prototype-python/` for reference. It is no longer maintained. All active development uses the OCaml compiler.
+An earlier Python prototype (Lark parser, Python checker) is no longer maintained. All active development uses the OCaml compiler.
 
 ## Comparison to Python Prototype
 
@@ -147,5 +147,5 @@ cblc parse examples/traffic_basic.cbl
 
 - Menhir manual: http://gallium.inria.fr/~fpottier/menhir/
 - Dune documentation: https://dune.readthedocs.io/
-- CBL Language Guide: `../CBL/cbl_language.md`
-- CBL Compiler Spec: `../CBL/cbl_compiler.md`
+- Architecture: `../ARCHITECTURE.md`
+- CBL overview paper: `../docs/cbl_overview.tex`

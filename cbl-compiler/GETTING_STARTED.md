@@ -168,7 +168,7 @@ matlab -batch "build_from_json('spec.json')"
 - Check `opam list` to see installed packages
 
 ### Parse errors
-- Check CBL syntax against `../CBL/cbl_language.md`
+- Check CBL syntax against `examples/traffic_basic.cbl` for reference
 - Use `cblc parse` to see where parsing fails
 - Enable debug output: `OCAMLRUNPARAM=b cblc parse file.cbl`
 
@@ -181,10 +181,9 @@ dune build
 ## Next Steps
 
 1. **Read the paper**: `../docs/cbl_overview.tex`
-2. **Study examples**: `../CBL/prototype/examples/*.cbl`
-3. **Language reference**: `../CBL/cbl_language.md`
-4. **Compiler spec**: `../CBL/cbl_compiler.md`
-5. **Implementation notes**: `IMPLEMENTATION.md`
+2. **Study examples**: `examples/traffic_basic.cbl`
+3. **Architecture**: `../ARCHITECTURE.md`
+4. **Implementation notes**: `IMPLEMENTATION.md`
 
 ## Contributing
 

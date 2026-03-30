@@ -97,7 +97,7 @@ flowchart TD
 | Zone | Components | Trust Basis | Verification Method |
 |------|-----------|-------------|---------------------|
 | **Untrusted** | LLM (extract + revise) | Statistical model; may hallucinate | All output gated by schema + provenance + downstream checks |
-| **Agent Instructions** | Domain agents, pipeline agents (`.agent.md`) | User-authored; injected into LLM system prompt | Content reviewed by engineer; does not bypass validation gates |
+| **Agent Instructions** | Domain agents, pipeline agents | User-authored; injected into LLM system prompt | Content reviewed by engineer; does not bypass validation gates |
 | **Mitigated** | 7 LLM hallucination mitigation modules | Deterministic, no LLM in checking path | 74 unit tests; no statistical components |
 | **Verified** | Prolog reasoning engine | Rule-based, 13 consistency rules | Deterministic; same input always produces same output |
 | **Qualified** | OCaml compiler | Type-safe, exhaustive pattern matching | CompCert lineage; qualified tool assumption (DO-178C §12.2) |
