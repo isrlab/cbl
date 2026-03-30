@@ -4,6 +4,8 @@ A structured specification language for state-based behavior, designed to bridge
 
 CBL targets certified embedded systems pipelines (DO-178C, ISO 26262) where requirements must be translated into models consumed by qualified code generators (Simulink Coder, SCADE KCG).
 
+> **Status**: This is a research prototype, not production software. APIs, file formats, and language syntax may change without notice.
+
 ## Pipeline
 
 ```
