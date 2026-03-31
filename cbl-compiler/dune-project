@@ -5,9 +5,9 @@
 
 (generate_opam_files true)
 
-(source (github isrlab/cbl))
-(authors "ISR Lab")
-(maintainers "isrlab")
+(source (github username/cbl))
+(authors "CBL Project")
+(maintainers "cbl@example.com")
 
 (package
  (name cbl)

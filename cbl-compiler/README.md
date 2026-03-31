@@ -51,17 +51,17 @@ cbl-compiler/
 │   ├── lexer.mll        # Lexer (ocamllex)
 │   ├── parser.mly       # Parser (menhir)
 │   ├── checker.ml       # Well-posedness checker
-│   ├── json_emit.ml     # JSON IR emission
-│   ├── nlp_bridge.ml    # JSON verdict ingestion + provenance gate
-│   └── z3_guard_checker.ml  # SMT guard verification
+│   ├── types.ml         # Type checker
+│   ├── lowering.ml      # AST lowering passes
+│   └── json_emit.ml     # JSON IR emission
 ├── test/
-│   └── test_basic.ml    # Unit tests
+│   └── test_checker.ml  # Unit tests
 └── examples/
     └── traffic_basic.cbl  # Example specifications
 ```
 
 ## References
 
-- Architecture: `../ARCHITECTURE.md`
-- CBL overview paper: `../docs/cbl_overview.tex`
-- Implementation notes: `IMPLEMENTATION.md`
+- CBL Language Guide: `../CBL/cbl_language.md`
+- CBL Compiler Spec: `../CBL/cbl_compiler.md`
+- MODELS paper: `../docs/cbl_overview.tex`

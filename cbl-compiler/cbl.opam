@@ -3,10 +3,10 @@ opam-version: "2.0"
 version: "0.1.0"
 synopsis: "CBL (Controlled Behavioral Language) compiler"
 description: "Compiler for CBL specifications targeting Stateflow and SCADE"
-maintainer: ["isrlab"]
-authors: ["ISR Lab"]
-homepage: "https://github.com/isrlab/cbl"
-bug-reports: "https://github.com/isrlab/cbl/issues"
+maintainer: ["cbl@example.com"]
+authors: ["CBL Project"]
+homepage: "https://github.com/username/cbl"
+bug-reports: "https://github.com/username/cbl/issues"
 depends: [
   "ocaml" {>= "4.14"}
   "dune" {>= "3.0"}
@@ -31,4 +31,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/isrlab/cbl.git"
+dev-repo: "git+https://github.com/username/cbl.git"
