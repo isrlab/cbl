@@ -107,7 +107,7 @@ cbl-elicit/          Python orchestration, LLM extraction, hallucination mitigat
 cbl-prolog/          Prolog consistency rules, repair, question generation
 cbl-compiler/        OCaml compiler: parser, checker, JSON IR emitter
 docs/                Papers and architecture documentation
-  MBPD.embedded.pdf  CBL-MBPD paper
+  MPBD.embedded.pdf  Model & Platform Based Design paper
   cbl_overview.pdf   CBL language overview
 ```
 
