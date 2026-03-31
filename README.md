@@ -117,7 +117,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system architecture, trust b
 
 ## Documentation
 
-- [MBPD Paper](docs/MBPD.embedded.pdf): Model and Platform Based Design of Embedded Systems
+- [MPBD Paper](docs/MPBD.embedded.pdf): Model and Platform Based Design of Embedded Systems
 - [CBL Overview](docs/cbl_overview.pdf): Language overview and formal semantics
 - [Compiler Guide](cbl-compiler/GETTING_STARTED.md): Getting started with the OCaml compiler
 
