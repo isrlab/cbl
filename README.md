@@ -117,7 +117,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system architecture, trust b
 
 ## Documentation
 
-- [CBL-MBPD Paper](docs/MBPD.embedded.pdf): "Closing the Requirements-to-Model Gap: A Controlled Behavioral Language for Model-Based Product Design"
+- [MBPD Paper](docs/MBPD.embedded.pdf): Model and Platform Based Design of Embedded Systems
 - [CBL Overview](docs/cbl_overview.pdf): Language overview and formal semantics
 - [Compiler Guide](cbl-compiler/GETTING_STARTED.md): Getting started with the OCaml compiler
 
