@@ -8,8 +8,47 @@ CBL targets certified embedded systems pipelines (DO-178C, ISO 26262) where requ
 
 ## Pipeline
 
-```
-Requirements (NL) → cbl-elicit → cbl-prolog → cbl-compiler → Verified CBL Spec → MBPD Toolchain
+```mermaid
+flowchart LR
+    classDef neural fill:#f8d7da,stroke:#842029,color:#842029
+    classDef symbolic fill:#d4edda,stroke:#155724,color:#155724
+    classDef gate fill:#fff3cd,stroke:#856404,color:#856404
+    classDef ext fill:#e2e3e5,stroke:#495057,color:#495057
+    classDef orch fill:#d1ecf1,stroke:#0c5460,color:#0c5460
+
+    NL["Requirements<br>(NL)"]:::ext
+    ORCH["Session<br>Orchestrator<br><i>Python</i>"]:::orch
+
+    NL --> ORCH
+
+    subgraph NEURAL ["Neural (LLM)"]
+        E["Extract /<br>Revise"]:::neural
+    end
+
+    ORCH -- "NL text +<br>diagnostics" --> E
+    E -- "extracted<br>facts" --> G1
+
+    subgraph GATES ["Validation Gates"]
+        G1["Schema<br><i>jsonschema</i>"]:::gate
+        G2["Provenance<br><i>Python</i>"]:::gate
+        G3["Verdict<br><i>jsonschema</i>"]:::gate
+    end
+    G1 --> G2
+
+    subgraph SYMBOLIC ["Symbolic (deterministic)"]
+        P["Reasoning<br>Engine<br><i>SWI-Prolog</i>"]:::symbolic
+        C["Compiler<br><i>OCaml</i>"]:::symbolic
+    end
+
+    G2 --> P
+    P -- "verdict" --> G3
+    G3 --> C
+
+    P -. "diagnostics" .-> ORCH
+    C <-. "errors /<br>iterate" .-> ORCH
+
+    C -- "pass" --> OUT["Verified<br>CBL Spec"]:::ext
+    OUT --> MBPD["MBPD<br>Toolchain"]:::ext
 ```
 
 1. **cbl-elicit** (Python): LLM-assisted extraction of behavioral facts from natural-language requirements. Enforces provenance, schema validation, and hallucination mitigations.
