@@ -1,6 +1,6 @@
 # CBL: Controlled Behavioral Language
 
-A structured specification language for state-based behavior, designed to bridge the gap between natural-language requirements and verified behavioral models in Model-Based Product Design (MBPD) workflows.
+A structured specification language for state-based behavior, designed to bridge the gap between natural-language requirements and verified behavioral models in Model-Based Design (MBD) workflows.
 
 CBL targets certified embedded systems pipelines (DO-178C, ISO 26262) where requirements must be translated into models consumed by qualified code generators (Simulink Coder, SCADE KCG).
 
