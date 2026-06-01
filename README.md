@@ -35,16 +35,16 @@ flowchart LR
     end
     G1 --> G2
 
-    subgraph SYMBOLIC ["Symbolic (deterministic)"]
-        P["Reasoning<br>Engine<br><i>SWI-Prolog</i>"]:::symbolic
-        C["Compiler<br><i>OCaml</i>"]:::symbolic
+    subgraph SYMBOLIC ["Symbolic (OCaml — cblc)"]
+        R["cblc reason<br><i>consistency rules</i>"]:::symbolic
+        C["cblc check / compile<br><i>well-posedness + IR</i>"]:::symbolic
     end
 
-    G2 --> P
-    P -- "verdict" --> G3
+    G2 --> R
+    R -- "verdict" --> G3
     G3 --> C
 
-    P -. "diagnostics" .-> ORCH
+    R -. "diagnostics" .-> ORCH
     C <-. "errors /<br>iterate" .-> ORCH
 
     C -- "pass" --> OUT["Verified<br>CBL Spec"]:::ext
@@ -52,15 +52,22 @@ flowchart LR
 ```
 
 1. **cbl-elicit** (Python): LLM-assisted extraction of behavioral facts from natural-language requirements. Enforces provenance, schema validation, and hallucination mitigations.
-2. **cbl-prolog** (SWI-Prolog): Rule-based consistency checking, repair suggestions, and diagnostic generation.
-3. **cbl-compiler** (OCaml): Well-posedness checking, type verification, and artifact emission.
+2. **cbl-compiler** (OCaml): A single `cblc` binary handling rule-based consistency reasoning (`cblc reason`), well-posedness checking (`cblc check`), and JSON IR compilation (`cblc compile` / `cblc ingest`). The reasoning engine — previously a separate SWI-Prolog component — was merged into the OCaml compiler.
 
 The LLM participates only in requirements elicitation. All downstream reasoning, checking, and code generation is deterministic.
+
+## Authoring surfaces
+
+Two optional tools support authors and reviewers; neither is required to run the pipeline.
+
+- **vscode-cbl** — VS Code extension providing TextMate syntax highlighting for `.cbl` files and on-save diagnostics from `cblc check`. For spec authors who edit CBL directly.
+- **.claude/skills** — Claude Code skills:
+  - `cbl-elicit` runs a structured discovery session that builds a `.cbl` file from a natural-language conversation, hiding the syntax from the user.
+  - `cbl-explain` produces plain-English summaries of `.cbl` files for stakeholders and certifiers who should not read CBL syntax.
 
 ## Prerequisites
 
 - Python 3.12+
-- SWI-Prolog 9.0+
 - OCaml 4.14+ with opam (dune, menhir, yojson, z3)
 
 ## Quick Start
@@ -85,13 +92,14 @@ dune build
 # Python (elicitation + mitigations)
 python -m pytest cbl-elicit/test -q
 
-# OCaml (compiler + checker)
+# OCaml (compiler + checker + reasoning)
 cd cbl-compiler && dune test
+```
 
-# Prolog (fixture-based)
-swipl -g main -t halt cbl-prolog/run.pl -- \
-  --input cbl-prolog/test/fdi_extracted.json \
-  --output /tmp/fdi_verdict.json
+### Run the reasoning engine standalone
+
+```bash
+cbl-compiler/_build/default/bin/cblc.exe reason extracted_facts.json -o verdict.json
 ```
 
 ### Run a specification pipeline (example)
@@ -104,10 +112,11 @@ python -m cbl-elicit --input requirements.txt --output spec.cbl
 
 ```
 cbl-elicit/          Python orchestration, LLM extraction, hallucination mitigations
-cbl-prolog/          Prolog consistency rules, repair, question generation
-cbl-compiler/        OCaml compiler: parser, checker, JSON IR emitter
+cbl-compiler/        OCaml: parser, well-posedness checker, reasoning engine, JSON IR emitter
+vscode-cbl/          VS Code extension (syntax highlighting + cblc check diagnostics)
+.claude/skills/      Claude Code skills (cbl-elicit, cbl-explain)
 docs/                Papers and architecture documentation
-  MPBD.embedded.pdf  Model & Platform Based Design paper
+  MBPD.embedded.pdf  Model-Based Design of Embedded Systems
   cbl_overview.pdf   CBL language overview
 ```
 
@@ -117,7 +126,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system architecture, trust b
 
 ## Documentation
 
-- [MPBD Paper](docs/MPBD.embedded.pdf): Model and Platform Based Design of Embedded Systems
+- [MBPD Paper](docs/MBPD.embedded.pdf): Model-Based Design of Embedded Systems
 - [CBL Overview](docs/cbl_overview.pdf): Language overview and formal semantics
 - [Compiler Guide](cbl-compiler/GETTING_STARTED.md): Getting started with the OCaml compiler
 
