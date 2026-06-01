@@ -16,7 +16,6 @@ class SessionConfig:
 
 @dataclass
 class ToolsConfig:
-    swipl: str = "swipl"
     cblc: str = "cblc"
 
 
@@ -54,8 +53,6 @@ def load_config(path: Path | None = None) -> Config:
             cfg.session.stall_threshold = max(1, int(s["stall_threshold"]))
     if "tools" in raw:
         t = raw["tools"]
-        if "swipl" in t:
-            cfg.tools.swipl = str(t["swipl"])
         if "cblc" in t:
             cfg.tools.cblc = str(t["cblc"])
     if "mitigations" in raw:

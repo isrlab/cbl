@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1",
+  "committed_facts": {
+    "schema_version": "0.1",
+    "system_name": "TrafficLight",
+    "assumes": [
+      {"name": "pedestrian_request", "atype": "boolean", "provenance": "user_stated"},
+      {"name": "timer_expired", "atype": "boolean", "provenance": "user_stated"}
+    ],
+    "constants": [
+      {"name": "green_duration", "ctype": "integer", "cvalue": 30, "provenance": "user_stated"}
+    ],
+    "guarantees": [
+      {
+        "name": "light_color",
+        "gtype": "{red, yellow, green}",
+        "provenance": "user_stated",
+        "default": {"value": {"kind": "hold"}, "provenance": "default_assumed"}
+      },
+      {"name": "walk_signal", "gtype": "boolean", "provenance": "user_stated"}
+    ],
+    "variables": [],
+    "definitions": [],
+    "always_invariants": [],
+    "initial_mode": {"value": "Green", "provenance": "user_stated"},
+    "modes": [
+      {
+        "name": "Green",
+        "provenance": "user_stated",
+        "transitions": [
+          {
+            "guard": {"when": {"kind": "is_true", "expr": "timer_expired"}},
+            "actions": [
+              {"kind": "set", "name": "light_color", "value": "yellow"},
+              {"kind": "set", "name": "walk_signal", "value": false}
+            ],
+            "target": {"transition_to": "Yellow"}
+          },
+          {
+            "guard": {"otherwise": true},
+            "actions": [
+              {"kind": "set", "name": "light_color", "value": "green"},
+              {"kind": "set", "name": "walk_signal", "value": false}
+            ],
+            "target": {"remain": true}
+          }
+        ]
+      },
+      {
+        "name": "Yellow",
+        "provenance": "user_stated",
+        "transitions": [
+          {
+            "guard": {"when": {"kind": "is_true", "expr": "timer_expired"}},
+            "actions": [
+              {"kind": "set", "name": "light_color", "value": "red"},
+              {"kind": "set", "name": "walk_signal", "value": true}
+            ],
+            "target": {"transition_to": "Red"}
+          },
+          {
+            "guard": {"otherwise": true},
+            "actions": [
+              {"kind": "hold", "name": "light_color"},
+              {"kind": "hold", "name": "walk_signal"}
+            ],
+            "target": {"remain": true}
+          }
+        ]
+      },
+      {
+        "name": "Red",
+        "provenance": "user_stated",
+        "transitions": [
+          {
+            "guard": {"when": {"kind": "and", "left": {"kind": "is_true", "expr": "timer_expired"}, "right": {"kind": "is_true", "expr": "pedestrian_request"}}},
+            "actions": [
+              {"kind": "set", "name": "light_color", "value": "green"},
+              {"kind": "set", "name": "walk_signal", "value": false}
+            ],
+            "target": {"transition_to": "Green"}
+          },
+          {
+            "guard": {"otherwise": true},
+            "actions": [
+              {"kind": "hold", "name": "light_color"},
+              {"kind": "set", "name": "walk_signal", "value": true}
+            ],
+            "target": {"remain": true}
+          }
+        ]
+      }
+    ]
+  },
+  "pending_facts": {},
+  "status": "pass",
+  "diagnostics": [],
+  "repairs": [],
+  "questions": []
+}

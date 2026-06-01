@@ -34,6 +34,7 @@ let usage () =
   print_endline "  cblc parse <file.cbl>           Parse and print AST";
   print_endline "  cblc ingest <verdict.json> -o <spec.cbl>  Ingest verdict facts to CBL";
   print_endline "  cblc ingest <verdict.json> --check-only   Validate only (exit 0/1)";
+  print_endline "  cblc reason <extracted_facts.json> -o <verdict.json>  Run reasoning engine";
   print_endline "  cblc help                       Show this help";
   print_endline "";
   exit 1
@@ -120,6 +121,15 @@ let () =
               end
             )
         )
+    )
+
+  | "reason" :: filename :: rest -> (
+      match rest with
+      | "-o" :: output :: _ -> exit (Reason.run ~input:filename ~output)
+      | _ ->
+          Printf.eprintf
+            "Usage: cblc reason <extracted_facts.json> -o <verdict.json>\n";
+          exit 2
     )
 
   | _ -> usage ()

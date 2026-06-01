@@ -3,7 +3,7 @@
  (public_name cbl.lib)
  (libraries yojson z3)
  (preprocess (pps ppx_deriving.show ppx_deriving_yojson))
- (modules ast checker json_emit nlp_bridge lexer parser z3_guard_checker))
+ (modules ast checker json_emit nlp_bridge reason lexer parser z3_guard_checker))
 
 (ocamllex lexer)
 

@@ -2,12 +2,12 @@
 
 Three-layer architecture:
   Layer 1 (LLM):    NL requirements → extracted_facts.json
-  Layer 2 (Prolog): extracted_facts.json → verdict.json
-  Layer 3 (OCaml):  verdict.json → spec.cbl
+  Layer 2 (OCaml):  extracted_facts.json → verdict.json   (cblc reason)
+  Layer 3 (OCaml):  verdict.json → spec.cbl               (cblc ingest)
 
 The session orchestrator manages the iteration protocol (§6 of the
-NLP-CBL interface contract), calling SWI-Prolog and cblc as subprocesses
-with JSON files as the interchange format.
+NLP-CBL interface contract), calling cblc as a subprocess with JSON files
+as the interchange format.
 """
 
 from __future__ import annotations
@@ -48,6 +48,7 @@ from .mitigations.pattern_justification import (
     PatternRecommendation,
     check_justifications,
 )
+from .normalize import normalize_facts
 
 logger = logging.getLogger(__name__)
 
@@ -56,13 +57,12 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_PROLOG_DIR = _REPO_ROOT / "cbl-prolog"
 _SCHEMA_DIR = Path(__file__).resolve().parent / "schema"
 _EXTRACTED_SCHEMA = _SCHEMA_DIR / "extracted_facts.schema.json"
 _VERDICT_SCHEMA = _SCHEMA_DIR / "verdict.schema.json"
 
-# External tool paths (overridable via environment or constructor)
-_DEFAULT_SWIPL = "swipl"
+# External tool path (overridable via constructor). Layer 2 (reasoning) and
+# Layer 3 (compile) are now both the OCaml `cblc` binary.
 _DEFAULT_CBLC = "cblc"
 
 
@@ -136,7 +136,7 @@ class LLMExtractor:
 class StubExtractor(LLMExtractor):
     """Stub extractor that loads a pre-made extracted_facts.json file.
 
-    Useful for testing the Prolog/OCaml layers without an LLM.
+    Useful for testing the reasoning/OCaml layers without an LLM.
     """
 
     def __init__(self, facts_path: Path):
@@ -216,12 +216,14 @@ class EngineerInterface:
 
 
 class BatchEngineerInterface(EngineerInterface):
-    """Non-interactive interface: auto-accepts all repairs, skips questions."""
+    """Non-interactive interface: auto-accepts all repairs, auto-confirms questions."""
 
     def present_questions(self, questions: list[dict]) -> dict[str, str]:
+        answers = {}
         for q in questions:
-            logger.info("Skipping question: %s", q.get("text", ""))
-        return {}
+            logger.info("Auto-confirming question: %s", q.get("text", ""))
+            answers[q.get("id", q.get("text", ""))] = "confirmed"
+        return answers
 
     def present_repairs(self, repairs: list[dict]) -> list[dict]:
         return repairs  # accept all
@@ -258,39 +260,26 @@ def validate_verdict(verdict: dict) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def run_prolog(
+def run_reason(
     input_path: Path,
     output_path: Path,
     *,
-    swipl: str = _DEFAULT_SWIPL,
-    prolog_dir: Path = _PROLOG_DIR,
+    cblc: str = _DEFAULT_CBLC,
     timeout: int = 30,
 ) -> tuple[int, str]:
-    """Run the Prolog reasoning engine.
+    """Run the reasoning engine (`cblc reason`).
 
     Returns (exit_code, stderr).
-    Exit codes: 0=pass, 1=fail/incomplete, 2=schema error.
+    Exit codes: 0=pass, 1=fail/incomplete, 2=schema/read error
+    (the same contract the former SWI-Prolog engine used).
     """
-    cmd = [
-        swipl,
-        "-g",
-        "main",
-        "-t",
-        "halt",
-        str(prolog_dir / "run.pl"),
-        "--",
-        "--input",
-        str(input_path),
-        "--output",
-        str(output_path),
-    ]
-    logger.debug("Running Prolog: %s", " ".join(cmd))
+    cmd = [cblc, "reason", str(input_path), "-o", str(output_path)]
+    logger.debug("Running reason engine: %s", " ".join(cmd))
     result = subprocess.run(
         cmd,
         capture_output=True,
         text=True,
         timeout=timeout,
-        cwd=str(prolog_dir),
     )
     return result.returncode, result.stderr
 
@@ -336,7 +325,7 @@ class Session:
       Step 1:  Engineer provides NL requirements.
       Step 2:  LLM produces extracted_facts.json.
       Step 2a: Validate against JSON Schema (retry up to 3 times).
-      Step 3:  Prolog validates → verdict.json.
+      Step 3:  Reasoning engine (cblc reason) → verdict.json.
       Step 4:  Present questions/repairs to engineer.
       Step 5:  Decision boundary (auto-apply or LLM-assisted).
       Step 6:  OCaml ingest → AST.
@@ -352,7 +341,6 @@ class Session:
         max_iterations: int = 10,
         schema_retries: int = 3,
         stall_threshold: int = 2,
-        swipl: str = _DEFAULT_SWIPL,
         cblc: str = _DEFAULT_CBLC,
         work_dir: Path | None = None,
         # Hallucination mitigation options
@@ -366,7 +354,6 @@ class Session:
         self.max_iterations = max_iterations
         self.schema_retries = schema_retries
         self.stall_threshold = stall_threshold
-        self.swipl = swipl
         self.cblc = cblc
         self.work_dir = (
             work_dir or Path(tempfile.mkdtemp(prefix="cbl_session_"))
@@ -433,6 +420,19 @@ class Session:
                 self.records.append(record)
                 return self._fail("Schema validation failed after retries", iteration)
 
+            # Normalize LLM output into canonical format before provenance
+            # enforcement, so that confirmed names match normalized values.
+            facts = normalize_facts(facts)
+
+            # In batch mode, auto-confirm structural facts that the pipeline
+            # cannot proceed without (system_name, initial_mode).
+            if isinstance(self.engineer, BatchEngineerInterface):
+                for key in ("system_name", "initial_mode"):
+                    field = facts.get(key, {})
+                    val = field.get("value", "") if isinstance(field, dict) else str(field)
+                    if val:
+                        self._confirmed_facts.add((key, val))
+
             # Provenance enforcement: override LLM-assigned provenance tags
             facts = enforce_provenance(
                 facts,
@@ -444,12 +444,12 @@ class Session:
 
             record.extracted_facts = facts
 
-            # Step 3: Prolog reasoning
-            verdict = self._run_prolog(facts, iteration)
+            # Step 3: reasoning engine (cblc reason)
+            verdict = self._run_reason(facts, iteration)
             if verdict is None:
                 record.stalled = True
                 self.records.append(record)
-                return self._fail("Prolog engine error", iteration)
+                return self._fail("Reason engine error", iteration)
 
             record.verdict = verdict
             record.status = verdict.get("status", "fail")
@@ -510,6 +510,21 @@ class Session:
             answers = {}
             if questions:
                 answers = self.engineer.present_questions(questions)
+                # Track confirmed facts from answered questions
+                for q in questions:
+                    qid = q.get("question_id", "")
+                    if answers.get(qid) == "confirmed" or answers.get(q.get("text", "")) == "confirmed":
+                        # Extract fact kind and name from question text
+                        q_text = q.get("text", "")
+                        m = re.match(
+                            r"The LLM inferred (?:a default for )?(\w+) '([^']+)'",
+                            q_text,
+                        )
+                        if m:
+                            fact_kind = m.group(1)
+                            fact_name = m.group(2)
+                            self._confirmed_facts.add((fact_kind, fact_name))
+                            self.audit_log.confirm(fact_kind, fact_name, iteration)
 
             if repairs:
                 accepted = self.engineer.present_repairs(repairs)
@@ -520,7 +535,7 @@ class Session:
                         r.get("action", {})
                     )
                     # Track confirmed facts for provenance.
-                    # Prolog emits for_diagnostic as e.g. "unconfirmed(sensor_a,assume)".
+                    # The reasoner emits for_diagnostic as e.g. "unconfirmed(sensor_a,assume)".
                     m = re.match(r"unconfirmed\((\w+),\s*(\w+)\)", diag_code)
                     if m:
                         fact_name, fact_kind = m.group(1), m.group(2)
@@ -607,11 +622,11 @@ class Session:
         return None
 
     # -------------------------------------------------------------------
-    # Internal: Prolog reasoning
+    # Internal: reasoning engine (cblc reason)
     # -------------------------------------------------------------------
 
-    def _run_prolog(self, facts: dict, iteration: int) -> dict | None:
-        """Step 3: run Prolog engine on extracted facts."""
+    def _run_reason(self, facts: dict, iteration: int) -> dict | None:
+        """Step 3: run the reasoning engine (`cblc reason`) on extracted facts."""
         input_path = self.work_dir / f"extracted_facts_{iteration}.json"
         output_path = self.work_dir / f"verdict_{iteration}.json"
 
@@ -626,33 +641,33 @@ class Session:
         start_time = time.time()
 
         try:
-            exit_code, stderr = run_prolog(
+            exit_code, stderr = run_reason(
                 input_path,
                 output_path,
-                swipl=self.swipl,
+                cblc=self.cblc,
             )
         except subprocess.TimeoutExpired:
-            logger.error("Prolog timed out on iteration %d", iteration)
+            logger.error("Reason engine timed out on iteration %d", iteration)
             return None
         except OSError as exc:
-            logger.error("Prolog invocation failed: %s", exc)
+            logger.error("Reason engine invocation failed: %s", exc)
             return None
 
         if exit_code == 2:
-            logger.error("Prolog schema error: %s", stderr)
+            logger.error("Reason engine schema/read error: %s", stderr)
             return None
 
         if exit_code not in (0, 1, 2):
-            logger.error("Prolog exited with unexpected code %d: %s", exit_code, stderr)
+            logger.error("Reason engine exited with unexpected code %d: %s", exit_code, stderr)
             return None
 
         if not output_path.exists():
-            logger.error("Prolog did not produce verdict: %s", stderr)
+            logger.error("Reason engine did not produce verdict: %s", stderr)
             return None
 
         try:
             if output_path.stat().st_mtime < start_time:
-                logger.error("Prolog verdict file is stale: %s", output_path)
+                logger.error("Reason engine verdict file is stale: %s", output_path)
                 return None
         except OSError as exc:
             logger.error("Failed to stat verdict file: %s", exc)

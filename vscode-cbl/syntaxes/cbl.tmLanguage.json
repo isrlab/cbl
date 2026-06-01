@@ -1,0 +1,160 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "CBL",
+  "scopeName": "source.cbl",
+  "fileTypes": ["cbl"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#sections" },
+    { "include": "#mode-decl" },
+    { "include": "#rule-keywords" },
+    { "include": "#timing" },
+    { "include": "#guards" },
+    { "include": "#actions" },
+    { "include": "#types" },
+    { "include": "#literals" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.cbl"
+    },
+    "sections": {
+      "patterns": [
+        {
+          "match": "^\\s*(System)\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.control.section.cbl" },
+            "2": { "name": "entity.name.type.system.cbl" }
+          }
+        },
+        {
+          "match": "^\\s*(Initial\\s+Mode)\\s*:\\s*([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.section.cbl" },
+            "2": { "name": "entity.name.tag.mode.cbl" }
+          }
+        },
+        {
+          "match": "^\\s*(Assumes|Definitions|Constants|Guarantees|Variables|Always)\\s*:",
+          "captures": {
+            "1": { "name": "keyword.control.section.cbl" }
+          }
+        }
+      ]
+    },
+    "mode-decl": {
+      "match": "^\\s*(Mode)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*:",
+      "captures": {
+        "1": { "name": "keyword.control.mode.cbl" },
+        "2": { "name": "entity.name.tag.mode.cbl" }
+      }
+    },
+    "rule-keywords": {
+      "patterns": [
+        {
+          "match": "\\b(When|Otherwise|shall)\\b",
+          "name": "keyword.control.rule.cbl"
+        },
+        {
+          "match": "\\b(transition\\s+to)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.transition.cbl" },
+            "2": { "name": "entity.name.tag.mode.cbl" }
+          }
+        },
+        {
+          "match": "\\b(remain\\s+in\\s+current)\\b",
+          "name": "keyword.control.transition.cbl"
+        }
+      ]
+    },
+    "timing": {
+      "match": "\\b(for(?:\\s+fewer\\s+than)?)\\s+(\\d+|[A-Za-z_][A-Za-z0-9_]*)\\s+(consecutive\\s+cycles)\\b",
+      "captures": {
+        "1": { "name": "keyword.other.timing.cbl" },
+        "2": { "name": "constant.numeric.cbl" },
+        "3": { "name": "keyword.other.timing.cbl" }
+      }
+    },
+    "guards": {
+      "patterns": [
+        {
+          "match": "\\b(is\\s+true|is\\s+false|is\\s+below|is\\s+one\\s+of|equals|exceeds)\\b",
+          "name": "keyword.operator.guard.cbl"
+        },
+        {
+          "match": "\\b(and|or|not)\\b",
+          "name": "keyword.operator.logical.cbl"
+        }
+      ]
+    },
+    "actions": {
+      "patterns": [
+        {
+          "match": "\\b(set)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s+(to)\\b",
+          "captures": {
+            "1": { "name": "keyword.control.action.cbl" },
+            "2": { "name": "variable.other.cbl" },
+            "3": { "name": "keyword.control.action.cbl" }
+          }
+        },
+        {
+          "match": "\\b(hold|increment|reset)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.action.cbl" },
+            "2": { "name": "variable.other.cbl" }
+          }
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "match": "\\b(boolean|integer|real)\\b",
+          "name": "support.type.primitive.cbl"
+        },
+        {
+          "match": "\\[\\s*(default|lo|hi)\\s*:",
+          "captures": {
+            "1": { "name": "support.type.attribute.cbl" }
+          }
+        }
+      ]
+    },
+    "literals": {
+      "patterns": [
+        {
+          "match": "\\b(true|false)\\b",
+          "name": "constant.language.boolean.cbl"
+        },
+        {
+          "match": "\\b-?\\d+(\\.\\d+)?\\b",
+          "name": "constant.numeric.cbl"
+        },
+        {
+          "begin": "\\{",
+          "end": "\\}",
+          "name": "meta.enum.cbl",
+          "beginCaptures": { "0": { "name": "punctuation.definition.enum.begin.cbl" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.enum.end.cbl" } },
+          "patterns": [
+            {
+              "match": "[A-Za-z_][A-Za-z0-9_]*",
+              "name": "constant.other.enum.cbl"
+            },
+            {
+              "match": ",",
+              "name": "punctuation.separator.enum.cbl"
+            }
+          ]
+        }
+      ]
+    },
+    "operators": {
+      "match": "[:,.]",
+      "name": "punctuation.separator.cbl"
+    }
+  }
+}

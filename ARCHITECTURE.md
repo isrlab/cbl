@@ -59,14 +59,14 @@ flowchart TD
 
     %% ── Row 6: Reasoning Engine ──
     subgraph VZ ["VERIFIED"]
-        Prolog["<b>Reasoning Engine</b> <br> Prolog · 13 rules"]:::verified
+        Reason["<b>Reasoning Engine</b> <br> OCaml · cblc reason · 13 rules"]:::verified
     end
-    Provenance -- "tagged facts" --> Prolog
-    Prolog -. "diagnostics, questions, repairs" .-> Session
+    Provenance -- "tagged facts" --> Reason
+    Reason -. "diagnostics, questions, repairs" .-> Session
 
     %% ── Row 7: Verdict Gate ──
     VerdictGate(["<b>Verdict Gate</b> <br> fatal on failure"]):::gate
-    Prolog -- "verdict.json" --> VerdictGate
+    Reason -- "verdict.json" --> VerdictGate
 
     %% ── Row 8: Compiler ──
     subgraph QZ ["QUALIFIED"]
@@ -85,7 +85,7 @@ flowchart TD
     end
 
     subgraph MZ ["LLM HALLUCINATION RISK"]
-        Mitigations["<b>Mitigations</b> <br> Python + Z3 · 7 modules"]:::mitigated
+        Mitigations["<b>Mitigations</b> <br> Python · 6 modules"]:::mitigated
     end
 
     CompilerGate -- "qualified artifact" --> MBPD
@@ -99,8 +99,8 @@ flowchart TD
 |------|-----------|-------------|---------------------|
 | **Untrusted** | LLM (extract + revise) | Statistical model; may hallucinate | All output gated by schema + provenance + downstream checks |
 | **Agent Instructions** | Domain agents, pipeline agents (`.agent.md`) | User-authored; injected into LLM system prompt | Content reviewed by engineer; does not bypass validation gates |
-| **Mitigated** | 7 LLM hallucination mitigation modules | Deterministic, no LLM in checking path | 74 unit tests; no statistical components |
-| **Verified** | Prolog reasoning engine | Rule-based, 13 consistency rules | Deterministic; same input always produces same output |
+| **Mitigated** | 6 LLM hallucination mitigation modules | Deterministic, no LLM in checking path | Deterministic unit tests; no statistical components |
+| **Verified** | Reasoning engine (`cblc reason`) | Rule-based, 13 consistency rules | Deterministic; same input always produces same output |
 | **Qualified** | OCaml compiler | Type-safe, exhaustive pattern matching | CompCert lineage; qualified tool assumption (DO-178C §12.2) |
 | **Certified** | MBPD toolchain | Independently certified code generators | Vendor-supplied qualification kits |
 | **Authoritative** | Engineer + audit log | Human judgment; append-only record | Provenance audit log is deterministic and inspectable |
@@ -111,15 +111,15 @@ The three validation gates (Schema, Provenance, Verdict) are deterministic Pytho
 
 Three gates prevent untrusted data from reaching trusted components:
 
-1. **Schema Gate** (LLM → Prolog): `extracted_facts.schema.json` enforced by Python `jsonschema`. Retries the LLM up to 3 times on failure; aborts if still invalid. Provenance tags constrained to a 7-value enum.
+1. **Schema Gate** (LLM → Reasoner): `extracted_facts.schema.json` enforced by Python `jsonschema`. Retries the LLM up to 3 times on failure; aborts if still invalid. Provenance tags constrained to a 7-value enum.
 
-2. **Provenance Gate** (LLM → Prolog): Unconditional. The orchestrator overwrites every provenance tag the LLM assigns. Facts matching engineer text become `user_stated`; previously confirmed facts become `user_confirmed`; everything else is forced to `llm_inferred`, which triggers Prolog rule R9 (engineer must confirm before the fact is committed).
+2. **Provenance Gate** (LLM → Reasoner): Unconditional. The orchestrator overwrites every provenance tag the LLM assigns. Facts matching engineer text become `user_stated`; previously confirmed facts become `user_confirmed`; everything else is forced to `llm_inferred`, which triggers rule R9 (engineer must confirm before the fact is committed).
 
-3. **Verdict Gate** (Prolog → OCaml): `verdict.schema.json` enforced by Python. Fatal on failure: a malformed Prolog verdict stops the iteration immediately rather than propagating to OCaml.
+3. **Verdict Gate** (`cblc reason` → `cblc ingest`): `verdict.schema.json` enforced by Python between the two `cblc` invocations. Fatal on failure: a malformed verdict stops the iteration immediately rather than propagating to compilation.
 
-### Reasoning Rules (Prolog)
+### Reasoning Rules
 
-The 13 consistency rules in `cbl-prolog/consistency.pl` partition into errors (block compilation) and warnings (flag for review).
+The 13 consistency rules run inside `cblc reason`: the structural/type/reachability rules in the Z3-backed `cbl-compiler/lib/checker.ml`, and the provenance and structural-completeness rules (R1, R5b, R8, R9, R9b, R13) in `cbl-compiler/lib/reason.ml`. They partition into errors (block compilation) and warnings (flag for review).
 
 | Rule | Name | Description |
 |------|------|-------------|
@@ -143,7 +143,7 @@ R5b and R9b are sub-rules of their parents. R14 was removed (entry-action undecl
 
 ### LLM Hallucination Mitigation Modules
 
-Seven post-success checks in `cbl-elicit/mitigations/`, all deterministic (no LLM in the checking path).
+Six post-success checks in `cbl-elicit/mitigations/`, all deterministic (no LLM in the checking path).
 
 | Module | Description |
 |--------|-------------|
@@ -153,7 +153,8 @@ Seven post-success checks in `cbl-elicit/mitigations/`, all deterministic (no LL
 | `pattern_justification` | Validates that every domain-pattern recommendation cites a real requirement with plausible term overlap. |
 | `provenance_control` | Assigns provenance tags deterministically from the orchestrator; maintains append-only audit log. |
 | `traceability` | Verifies every fact cites a real requirement fragment and every requirement is covered (surjectivity). |
-| `z3_guard_checker` | Uses Z3 SMT queries for guard exclusivity and completeness, strengthening Prolog R2/R10. |
+
+A seventh semantic check, the **Z3 guard checker**, is not a Python mitigation module: it lives in the OCaml compiler (`cbl-compiler/lib/z3_guard_checker.ml`) and runs inside `cblc reason`/the well-posedness checker, using Z3 SMT queries for guard exclusivity and completeness to strengthen the R2/R10 guard checks.
 
 ## Data Formats
 
@@ -161,8 +162,8 @@ All inter-layer communication uses JSON with explicit schemas.
 
 | Artifact | Producer | Consumer | Schema |
 |----------|----------|----------|--------|
-| `extracted_facts_N.json` | LLM (Layer 1) | Prolog (Layer 2) | `cbl-elicit/schema/extracted_facts.schema.json` |
-| `verdict_N.json` | Prolog (Layer 2) | OCaml (Layer 3) | `cbl-elicit/schema/verdict.schema.json` |
+| `extracted_facts_N.json` | LLM (Layer 1) | `cblc reason` (Layer 2) | `cbl-elicit/schema/extracted_facts.schema.json` |
+| `verdict_N.json` | `cblc reason` (Layer 2) | `cblc ingest` (Layer 3) | `cbl-elicit/schema/verdict.schema.json` |
 | `spec.cbl` | OCaml (Layer 3) | Engineer / MBPD | CBL grammar (EBNF in compiler) |
 | `provenance_audit.json` | Orchestrator | Auditor | Append-only log; timestamped entries |
 
@@ -176,8 +177,8 @@ Every semantic value in `extracted_facts.json` is wrapped as `{value, provenance
 | `user_confirmed` | Engineer explicitly approved | Orchestrator (confirmation tracking) |
 | `llm_inferred` | LLM proposed, not yet confirmed | Orchestrator (default for all LLM output) |
 | `default_assumed` | System default (e.g., initial values) | Orchestrator |
-| `rule_derived` | Prolog derived from confirmed premises | Prolog engine |
-| `rule_derived_pending` | Prolog derived from unconfirmed premises | Prolog engine |
+| `rule_derived` | Reasoner derived from confirmed premises | Reasoner (`cblc reason`) |
+| `rule_derived_pending` | Reasoner derived from unconfirmed premises | Reasoner (`cblc reason`) |
 | `user_rejected` | Engineer rejected | Orchestrator |
 
 ## Formal Semantics
@@ -210,7 +211,7 @@ $$\mathcal{M} = (S,\; U,\; X,\; Y,\; s_0,\; x_0,\; \delta,\; \lambda)$$
 1. **LLM is untrusted**: It may hallucinate facts, invent requirements, or assign false provenance. All output is gated.
 2. **Provenance enforcement is unconditional**: No configuration can bypass it. The orchestrator overwrites all LLM provenance tags on every iteration.
 3. **OCaml compiler is a qualified tool**: Its acceptance is the final structural gate before downstream certified code generation.
-4. **Engineer confirmation is authoritative**: Recorded in the append-only audit log. Prolog treats confirmed facts as committed.
+4. **Engineer confirmation is authoritative**: Recorded in the append-only audit log. The reasoner treats confirmed facts as committed.
 5. **Downstream MBPD tools are independently certified**: Simulink Coder and SCADE KCG carry their own DO-178C / ISO 26262 qualification.
 6. **Pre-enforcement JSON is preserved**: `extracted_facts_N.json` written to `work_dir` before provenance enforcement, enabling post-hoc audit of raw LLM output.
 
@@ -220,9 +221,9 @@ $$\mathcal{M} = (S,\; U,\; X,\; Y,\; s_0,\; x_0,\; \delta,\; \lambda)$$
 
 ## Known Gaps (deferred, low priority)
 
-- **Prolog input validation**: `bridge.pl` does not schema-validate its JSON input. Not exploitable through the orchestrator (Python validates first), but matters if Prolog is invoked standalone.
+- **Reasoner input validation**: `cblc reason` checks `schema_version` and the provenance-attestation flag, but does not full-JSON-Schema-validate its `extracted_facts` input. Not exploitable through the orchestrator (Python validates first), but matters if `cblc reason` is invoked standalone.
 - **OCaml schema validation**: `nlp_bridge.ml` uses ad-hoc field parsing rather than JSON Schema. The well-posedness checker provides stronger semantic validation.
-- **Language consolidation**: The repo currently uses three in-repo languages (Python, Prolog, OCaml). The 13 Prolog consistency rules could be absorbed into the OCaml compiler as a `reasoning` module, reducing to two languages aligned with the trust boundary: Python (orchestrator, untrusted/mitigated layer) and OCaml (everything deterministic, verified/qualified layer).
+- **Language consolidation (resolved, 2026-05)**: The Prolog reasoning engine was merged into the OCaml compiler as `cblc reason` (`cbl-compiler/lib/reason.ml`); the structural/type rules reuse the existing Z3-backed checker. The repo now uses two in-repo languages aligned with the trust boundary: Python (orchestrator, untrusted/mitigated layer) and OCaml (everything deterministic, verified/qualified layer). Equivalence with the former Prolog engine was verified by a differential test on the `fdi` and `traffic` fixtures before removal.
 
 ---
 
@@ -237,7 +238,7 @@ sequenceDiagram
     participant L as LLM (untrusted)
     participant S as Schema Gate
     participant P as Provenance Gate
-    participant R as Prolog (13 rules)
+    participant R as Reasoner (cblc reason)
     participant V as Verdict Gate
     participant C as Compiler (OCaml)
     participant M as LLM Hallucination Mitigations
@@ -310,7 +311,7 @@ sequenceDiagram
 1. **Extract**: LLM produces `extracted_facts` (or revises based on prior diagnostics).
 2. **Schema validate**: Python `jsonschema` enforces structure. Up to 3 retries on failure; abort if exhausted.
 3. **Provenance enforce**: Orchestrator overwrites all provenance tags. Audit log appended.
-4. **Prolog reason**: 13 consistency rules fire. Repairs and questions generated. Facts partitioned into committed vs. pending.
+4. **Reason** (`cblc reason`): 13 consistency rules fire. Repairs and questions generated. Facts partitioned into committed vs. pending.
 5. **Verdict validate**: Schema enforced. Fatal on failure.
 6. **Engineer interact**: Diagnostics, questions, and repair proposals presented. Engineer confirms or rejects.
 7. **OCaml compile** (on pass): Well-posedness checker runs. If errors, diagnostics feed back into next iteration.

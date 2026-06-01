@@ -1,0 +1,45 @@
+{
+  "name": "vscode-cbl",
+  "displayName": "CBL (Controlled Behavioral Language)",
+  "description": "Syntax highlighting and well-posedness diagnostics for CBL specifications.",
+  "version": "0.1.0",
+  "publisher": "cbl-research",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Programming Languages", "Linters"],
+  "main": "./extension.js",
+  "activationEvents": ["onLanguage:cbl"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "cbl",
+        "aliases": ["CBL", "Controlled Behavioral Language"],
+        "extensions": [".cbl"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cbl",
+        "scopeName": "source.cbl",
+        "path": "./syntaxes/cbl.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "CBL",
+      "properties": {
+        "cbl.cblcPath": {
+          "type": "string",
+          "default": "cblc",
+          "description": "Path to the cblc executable. Defaults to 'cblc' on PATH."
+        },
+        "cbl.checkOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run cblc check automatically on save."
+        }
+      }
+    }
+  }
+}

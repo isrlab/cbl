@@ -34,7 +34,7 @@ def main() -> int:
     parser.add_argument(
         "--facts",
         type=Path,
-        help="Pre-made extracted_facts.json (skip LLM, test Prolog+OCaml)",
+        help="Pre-made extracted_facts.json (skip LLM, test reasoning+OCaml)",
     )
     parser.add_argument(
         "--output",
@@ -53,11 +53,6 @@ def main() -> int:
         "--batch",
         action="store_true",
         help="Non-interactive: auto-accept repairs, skip questions",
-    )
-    parser.add_argument(
-        "--swipl",
-        default=None,
-        help="Path to SWI-Prolog executable",
     )
     parser.add_argument(
         "--cblc",
@@ -171,7 +166,6 @@ def main() -> int:
         if args.max_iterations is not None
         else cfg.session.max_iterations
     )
-    swipl = args.swipl if args.swipl is not None else cfg.tools.swipl
     cblc = args.cblc if args.cblc is not None else cfg.tools.cblc
 
     session = Session(
@@ -180,7 +174,6 @@ def main() -> int:
         max_iterations=max_iter,
         schema_retries=cfg.session.schema_retries,
         stall_threshold=cfg.session.stall_threshold,
-        swipl=swipl,
         cblc=cblc,
         work_dir=args.work_dir,
         enable_back_translation=cfg.mitigations.back_translation,

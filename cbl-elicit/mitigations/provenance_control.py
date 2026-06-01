@@ -384,4 +384,15 @@ def extract_user_fragments(nl_text: str) -> set[str]:
         if word.lower() not in {"called", "named", "is", "are", "the", "a", "an"}:
             fragments.add(word)
 
+    # Words preceding "mode" or "state" (e.g., "Green mode", "In Red mode")
+    for match in re.finditer(r"\b(\w+)\s+(?:mode|state)\b", nl_text, re.IGNORECASE):
+        word = match.group(1)
+        if word.lower() not in {"the", "a", "an", "in", "each", "this", "that",
+                                 "current", "same", "new", "next", "first"}:
+            fragments.add(word)
+
+    # snake_case identifiers (words containing underscores are programmatic names)
+    for match in re.finditer(r"\b(\w+_\w+)\b", nl_text):
+        fragments.add(match.group(1))
+
     return fragments

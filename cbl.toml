@@ -7,8 +7,7 @@ schema_retries = 3
 stall_threshold = 2          # consecutive no-progress iterations before stall
 
 [tools]
-swipl = "swipl"
-cblc  = "cblc"
+cblc  = "cblc"   # reasoning (cblc reason) + compilation (cblc ingest)
 
 [mitigations]
 back_translation  = true

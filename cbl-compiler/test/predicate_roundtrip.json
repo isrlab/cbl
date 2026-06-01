@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1",
+  "committed_facts": {
+    "schema_version": "0.1",
+    "system_name": "PredicateRoundtrip",
+    "assumes": [
+      {"name": "sensor_a", "atype": "real[0.0..100.0]", "provenance": "user_stated"},
+      {"name": "sensor_b", "atype": "real[0.0..100.0]", "provenance": "user_stated"},
+      {"name": "flag", "atype": "boolean", "provenance": "user_stated"}
+    ],
+    "constants": [
+      {"name": "THRESHOLD", "ctype": "integer", "cvalue": 10, "provenance": "user_stated"}
+    ],
+    "guarantees": [
+      {"name": "status", "gtype": "{ok, warn, fail}", "provenance": "user_stated"}
+    ],
+    "variables": [],
+    "definitions": [],
+    "always_invariants": [],
+    "initial_mode": {"value": "Normal", "provenance": "user_stated"},
+    "modes": [
+      {
+        "name": "Normal",
+        "provenance": "user_stated",
+        "transitions": [
+          {
+            "guard": {"when": {"kind": "and", "left": {"kind": "exceeds", "lhs": "sensor_a", "rhs": "THRESHOLD"}, "right": {"kind": "is_true", "expr": "flag"}}},
+            "actions": [{"kind": "set", "name": "status", "value": "warn"}],
+            "target": {"transition_to": "Warning"}
+          },
+          {
+            "guard": {"when": {"kind": "not", "operand": {"kind": "is_true", "expr": "flag"}}},
+            "actions": [{"kind": "set", "name": "status", "value": "ok"}],
+            "target": {"remain": true}
+          },
+          {
+            "guard": {"otherwise": true},
+            "actions": [{"kind": "set", "name": "status", "value": "ok"}],
+            "target": {"remain": true}
+          }
+        ]
+      },
+      {
+        "name": "Warning",
+        "provenance": "user_stated",
+        "transitions": [
+          {
+            "guard": {"when": {"kind": "equals", "lhs": "sensor_a", "rhs": "sensor_b"}},
+            "actions": [{"kind": "set", "name": "status", "value": "ok"}],
+            "target": {"transition_to": "Normal"}
+          },
+          {
+            "guard": {"when": {"kind": "is_below", "lhs": {"kind": "binop", "op": "-", "lhs": "sensor_a", "rhs": "sensor_b"}, "rhs": "THRESHOLD"}},
+            "actions": [{"kind": "set", "name": "status", "value": "ok"}],
+            "target": {"transition_to": "Normal"}
+          },
+          {
+            "guard": {"when": {"kind": "for_n_cycles", "n": 5, "base": {"kind": "exceeds", "lhs": "sensor_a", "rhs": "THRESHOLD"}}},
+            "actions": [{"kind": "set", "name": "status", "value": "fail"}],
+            "target": {"transition_to": "Failed"}
+          },
+          {
+            "guard": {"when": {"kind": "for_n_cycles", "n": 3, "base": {"kind": "true"}}},
+            "actions": [{"kind": "set", "name": "status", "value": "fail"}],
+            "target": {"transition_to": "Failed"}
+          },
+          {
+            "guard": {"otherwise": true},
+            "actions": [{"kind": "set", "name": "status", "value": "warn"}],
+            "target": {"remain": true}
+          }
+        ]
+      },
+      {
+        "name": "Failed",
+        "provenance": "user_stated",
+        "transitions": [
+          {
+            "guard": {"when": {"kind": "or", "left": {"kind": "is_below", "lhs": "sensor_a", "rhs": "THRESHOLD"}, "right": {"kind": "is_false", "expr": "flag"}}},
+            "actions": [{"kind": "set", "name": "status", "value": "ok"}],
+            "target": {"transition_to": "Normal"}
+          },
+          {
+            "guard": {"otherwise": true},
+            "actions": [{"kind": "set", "name": "status", "value": "fail"}],
+            "target": {"remain": true}
+          }
+        ]
+      }
+    ]
+  },
+  "pending_facts": {},
+  "status": "pass",
+  "diagnostics": [],
+  "repairs": [],
+  "questions": []
+}

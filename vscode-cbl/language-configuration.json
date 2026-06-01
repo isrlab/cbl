@@ -1,0 +1,21 @@
+{
+  "comments": {
+    "lineComment": "#"
+  },
+  "brackets": [
+    ["{", "}"],
+    ["[", "]"]
+  ],
+  "autoClosingPairs": [
+    { "open": "{", "close": "}" },
+    { "open": "[", "close": "]" }
+  ],
+  "surroundingPairs": [
+    ["{", "}"],
+    ["[", "]"]
+  ],
+  "indentationRules": {
+    "increaseIndentPattern": "^\\s*(System|Assumes|Definitions|Constants|Guarantees|Variables|Always|Mode\\s+\\w+)\\s*:?\\s*$",
+    "decreaseIndentPattern": "^\\s*$"
+  }
+}

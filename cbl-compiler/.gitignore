@@ -32,5 +32,8 @@ _build/
 _opam/
 .merlin
 
-# Test outputs
+# Test outputs (generated JSON)
 *.json
+# But keep test fixtures
+!test/traffic_verdict.json
+!test/predicate_roundtrip.json

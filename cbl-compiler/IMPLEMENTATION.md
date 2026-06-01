@@ -94,23 +94,6 @@ The compiler is structured in classic phases:
 - [ ] Language server protocol (LSP) support
 - [ ] Python API for LLM orchestration (optional; not in core compiler)
 
-## Note on Python Prototype
-
-The original Python prototype (Lark parser, Python checker) has been archived at `_archive/cbl-prototype-python/` for reference. It is no longer maintained. All active development uses the OCaml compiler.
-
-## Comparison to Python Prototype
-
-| Aspect | Python (archived) | OCaml |
-|--------|--------|-------|
-| Type safety | Runtime | Compile-time |
-| Pattern matching | Incomplete | Exhaustive |
-| Error handling | Exceptions | Result types |
-| Parser | Lark (PEG) | Menhir (LR) |
-| AST manipulation | Dicts/classes | ADTs |
-| Testing | pytest | OUnit/QCheck |
-| Build | pip/poetry | dune/opam |
-| Deployment | Python required | Native binary |
-
 ## Build Instructions
 
 ```bash

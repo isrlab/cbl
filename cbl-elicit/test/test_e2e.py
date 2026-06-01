@@ -1,4 +1,4 @@
-"""End-to-end test: extracted_facts → Prolog → OCaml → spec.cbl"""
+"""End-to-end test: extracted_facts → cblc reason → cblc ingest → spec.cbl"""
 
 import importlib.util
 import json
@@ -52,7 +52,7 @@ def _cblc_available() -> bool:
 @pytest.mark.skipif(not _FACTS_PATH.exists(), reason="traffic_extracted.json missing")
 @pytest.mark.skipif(not _cblc_available(), reason="cblc binary not built")
 def test_e2e_traffic(tmp_path, caplog):
-    """Full pipeline: StubExtractor → Prolog → OCaml → spec.cbl"""
+    """Full pipeline: StubExtractor → cblc reason → cblc ingest → spec.cbl"""
     # NL text must contain the fact names so that enforce_provenance assigns
     # user_stated (not llm_inferred), allowing compilation without confirmations.
     nl_text = (
@@ -73,7 +73,6 @@ def test_e2e_traffic(tmp_path, caplog):
             extractor,
             engineer=engineer,
             max_iterations=5,
-            swipl="swipl",
             cblc=str(_CBLC_PATH),
             work_dir=tmp_path,
         )
