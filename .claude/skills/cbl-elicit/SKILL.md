@@ -1,6 +1,6 @@
 ---
 name: cbl-elicit
-description: "Run a structured discovery session to build a CBL (Controlled Behavioural Language) specification through conversation. Use when the user wants to specify a controller or state machine, capture mode/guard/action logic, define how a system reacts to signals, or describe behaviour they need formalised. The user should never see CBL syntax — they describe behaviour in English; Claude writes and verifies the .cbl file in the background."
+description: "Run a structured discovery session to build a CBL (Controlled Behavioural Language) specification through conversation. Use when the user wants to specify a controller or state machine, capture mode/guard/action logic, define how a system reacts to signals, or describe behaviour they need formalised. The user should never see CBL syntax — they describe behaviour in English; Claude writes and verifies the .cblang file in the background."
 ---
 
 # CBL Elicitation
@@ -16,8 +16,8 @@ If the user explicitly asks to see the spec, show it. Otherwise, keep CBL out of
 | Task | Use |
 |------|-----|
 | Building a new spec from scratch | this skill |
-| Editing an existing `.cbl` file | edit it directly; cite [.claude/rules/cbl.md](../../rules/cbl.md) for syntax |
-| Running well-posedness check | `cblc check <file>.cbl` (Bash) |
+| Editing an existing `.cblang` file | edit it directly; cite [.claude/rules/cbl.md](../../rules/cbl.md) for syntax |
+| Running well-posedness check | `cblc check <file>.cblang` (Bash) |
 | Reading the language reference | [.claude/rules/cbl.md](../../rules/cbl.md) |
 | Translating checker errors to questions | [references/checker-errors-to-questions.md](references/checker-errors-to-questions.md) |
 
@@ -37,14 +37,14 @@ CBL does **not** describe: continuous dynamics, message passing, data structures
 Three rules govern your output to the user:
 
 1. **Speak the domain, not the IR.** Say "when the timer expires" not `timer_expired is true`. Say "the light stays green" not `set light_color to green`.
-2. **Hide the file.** Never paste CBL into the chat unless the user asks. Save it as `<system_name>.cbl` (snake_case) in the working directory and tell the user you've saved it.
+2. **Hide the file.** Never paste CBL into the chat unless the user asks. Save it as `<system_name>.cblang` (snake_case) in the working directory and tell the user you've saved it.
 3. **Translate every checker error into a question.** A checker failure means a decision the user has not made yet. Surface that decision in English. See [references/checker-errors-to-questions.md](references/checker-errors-to-questions.md).
 
 If the user types "show me the spec", or "what does the CBL look like", show it. Then return to English.
 
 ## Elicitation methodology
 
-Run five phases in order. After each phase, write the partial `.cbl` file and run `cblc check`. Any failures become questions for the next phase.
+Run five phases in order. After each phase, write the partial `.cblang` file and run `cblc check`. Any failures become questions for the next phase.
 
 ### Phase 1: Scope and signals
 
@@ -148,7 +148,7 @@ Outputs in spec: `Always:` clause (invariants), possibly extra `Assumes` for sen
 
 ### Phase 6: Verify and confirm
 
-1. Run `cblc check <file>.cbl`.
+1. Run `cblc check <file>.cblang`.
 2. If it fails, take each error and convert it to an English question using the [error → question table](references/checker-errors-to-questions.md). Ask the user. Update the spec. Re-run.
 3. When it passes (`✓ Specification is well-posed`), read back a one-paragraph English summary: "Here's what we've specified: a controller called X that watches A, B, C and outputs P, Q. It has modes M1, M2, M3, starting in M1. It moves from M1 to M2 when …, etc."
 4. Ask: "Does that match what you intended?"
@@ -245,7 +245,7 @@ Total: roughly 20–40 turns for a non-trivial controller. Faster if the user is
 
 ## After elicitation
 
-The artifact is one `.cbl` file that passes `cblc check`. Downstream pipeline steps (`cblc compile`, `cblc reason`) operate on it directly — the user does not need to touch them as part of elicitation.
+The artifact is one `.cblang` file that passes `cblc check`. Downstream pipeline steps (`cblc compile`, `cblc reason`) operate on it directly — the user does not need to touch them as part of elicitation.
 
 If the user wants to change the spec later:
 

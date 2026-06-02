@@ -1,8 +1,8 @@
 """CBL elicitation CLI entry point.
 
 Usage:
-    python -m cbl_elicit --input requirements.txt --output spec.cbl
-    python -m cbl_elicit --facts extracted_facts.json --output spec.cbl
+    python -m cbl_elicit --input requirements.txt --output spec.cblang
+    python -m cbl_elicit --facts extracted_facts.json --output spec.cblang
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ from .session import (
 def main() -> int:
     parser = argparse.ArgumentParser(
         prog="cbl_elicit",
-        description="CBL elicitation: NL requirements → verified spec.cbl",
+        description="CBL elicitation: NL requirements → verified spec.cblang",
     )
     parser.add_argument(
         "--input",
@@ -41,7 +41,7 @@ def main() -> int:
         "-o",
         type=Path,
         required=True,
-        help="Output path for spec.cbl",
+        help="Output path for spec.cblang",
     )
     parser.add_argument(
         "--max-iterations",

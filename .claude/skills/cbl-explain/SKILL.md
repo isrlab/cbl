@@ -1,18 +1,18 @@
 ---
 name: cbl-explain
-description: "Produce a plain-English summary of a CBL specification for a stakeholder, certifier, or domain expert who should not read CBL syntax. Use when the user asks to explain, summarise, describe, or walk through a .cbl file — or to share what a controller does with someone who isn't a CBL author."
+description: "Produce a plain-English summary of a CBL specification for a stakeholder, certifier, or domain expert who should not read CBL syntax. Use when the user asks to explain, summarise, describe, or walk through a .cblang file — or to share what a controller does with someone who isn't a CBL author."
 ---
 
 # CBL Explain
 
-This skill takes a `.cbl` file and produces an English description of the controller's behaviour. The reader of the output never sees CBL syntax.
+This skill takes a `.cblang` file and produces an English description of the controller's behaviour. The reader of the output never sees CBL syntax.
 
 This is the inverse of [cbl-elicit](../cbl-elicit/SKILL.md): elicit hides CBL during authoring; explain hides CBL during review.
 
 ## When to use this skill
 
 - "Explain this spec" / "what does this controller do?"
-- "Summarise traffic_light.cbl"
+- "Summarise traffic_light.cblang"
 - "I need to send this to legal / a certifier / a domain expert — can you describe it without the syntax?"
 - Read-back at the end of a `cbl-elicit` session (the elicit skill calls this implicitly in its Phase 6).
 
@@ -24,7 +24,7 @@ Do **not** use this skill to:
 
 ## Pre-flight: run `cblc check` first
 
-Before explaining anything, run `cblc check <file>.cbl`. Three outcomes:
+Before explaining anything, run `cblc check <file>.cblang`. Three outcomes:
 
 1. **`✓ Specification is well-posed`** — proceed.
 2. **Parse error** — the file is malformed CBL. Tell the user: "The spec file has a syntax error and I can't read it confidently. Want to fix it first?" Do not guess.
@@ -141,7 +141,7 @@ If the user says "show me the actual CBL" or "what does that look like in syntax
 
 ## Examples
 
-### Minimal — a stakeholder summary of `traffic_light.cbl`
+### Minimal — a stakeholder summary of `traffic_light.cblang`
 
 > **What it does.** A traffic light controller that cycles through green, yellow, and red phases on a 30-tick timer, and turns on the walk signal during the red phase.
 >

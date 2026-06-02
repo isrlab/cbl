@@ -30,7 +30,7 @@ flowchart TD
     Engineer -- "NL requirements" --> Session
     Engineer -. "answers / confirmations" .-> Session
     Session -. "questions + repairs" .-> Engineer
-    Session -. "spec.cbl + reports" .-> Engineer
+    Session -. "spec.cblang + reports" .-> Engineer
 
     %% ── Row 3: Untrusted (right) + Agents (far right) ──
     subgraph UZ ["UNTRUSTED"]
@@ -77,7 +77,7 @@ flowchart TD
 
     %% ── Row 9: Compilation Gate ──
     CompilerGate(["<b>Compilation Gate</b> <br> zero errors"]):::gate
-    Compiler -- "spec.cbl" --> CompilerGate
+    Compiler -- "spec.cblang" --> CompilerGate
 
     %% ── Row 10: Outputs (left: MBPD, right: Mitigations) ──
     subgraph CZ ["CERTIFIED"]
@@ -164,7 +164,7 @@ All inter-layer communication uses JSON with explicit schemas.
 |----------|----------|----------|--------|
 | `extracted_facts_N.json` | LLM (Layer 1) | `cblc reason` (Layer 2) | `cbl-elicit/schema/extracted_facts.schema.json` |
 | `verdict_N.json` | `cblc reason` (Layer 2) | `cblc ingest` (Layer 3) | `cbl-elicit/schema/verdict.schema.json` |
-| `spec.cbl` | OCaml (Layer 3) | Engineer / MBPD | CBL grammar (EBNF in compiler) |
+| `spec.cblang` | OCaml (Layer 3) | Engineer / MBPD | CBL grammar (EBNF in compiler) |
 | `provenance_audit.json` | Orchestrator | Auditor | Append-only log; timestamped entries |
 
 ### Provenance Tags
@@ -291,7 +291,7 @@ sequenceDiagram
         rect rgba(212,237,218,0.4)
             Note over C: QUALIFIED
             O->>C: verdict.json
-            C-->>O: spec.cbl + JSON IR
+            C-->>O: spec.cblang + JSON IR
         end
         alt checker passes
             rect rgba(232,218,239,0.4)
@@ -299,7 +299,7 @@ sequenceDiagram
                 O->>M: run all checks
                 M-->>O: reports
             end
-            O->>E: spec.cbl + reports
+            O->>E: spec.cblang + reports
         else errors
             Note over O: Loop with diagnostics
         end

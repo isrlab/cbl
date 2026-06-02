@@ -63,7 +63,7 @@ Now `cblc` command will be in your PATH.
 
 ### Check a Specification
 ```bash
-./_build/default/bin/cblc.exe check examples/traffic_basic.cbl
+./_build/default/bin/cblc.exe check examples/traffic_basic.cblang
 ```
 
 Expected output:
@@ -73,12 +73,12 @@ Expected output:
 
 ### Compile to JSON IR
 ```bash
-./_build/default/bin/cblc.exe compile examples/traffic_basic.cbl -o traffic.json
+./_build/default/bin/cblc.exe compile examples/traffic_basic.cblang -o traffic.json
 ```
 
 Expected output:
 ```
-✓ Compiled examples/traffic_basic.cbl → traffic.json
+✓ Compiled examples/traffic_basic.cblang → traffic.json
 ```
 
 ### View the JSON IR
@@ -124,7 +124,7 @@ cbl-compiler/
 │   ├── json_emit.ml # JSON IR emission
 │   └── dune         # Library build config
 ├── examples/
-│   └── traffic_basic.cbl
+│   └── traffic_basic.cblang
 ├── dune-project     # Project metadata
 ├── Makefile         # Convenience targets
 └── README.md        # This file
@@ -134,23 +134,23 @@ cbl-compiler/
 
 ### Parse and Show AST
 ```bash
-cblc parse examples/traffic_basic.cbl
+cblc parse examples/traffic_basic.cblang
 ```
 
 ### Check for Well-Posedness Errors
 ```bash
 # This will fail if specification is not well-posed
-cblc check bad_example.cbl
+cblc check bad_example.cblang
 echo $?  # Non-zero exit code on error
 ```
 
 ### Pipeline Integration
 
-**User/LLM writes spec.cbl** → **OCaml compiler** → **.json IR** → **MATLAB backend**
+**User/LLM writes spec.cblang** → **OCaml compiler** → **.json IR** → **MATLAB backend**
 
 ```bash
-# Compile spec.cbl (assuming you have it ready)
-cblc compile spec.cbl -o spec.json
+# Compile spec.cblang (assuming you have it ready)
+cblc compile spec.cblang -o spec.json
 
 # MATLAB reads JSON and builds Stateflow
 matlab -batch "build_from_json('spec.json')"
@@ -170,7 +170,7 @@ matlab -batch "build_from_json('spec.json')"
 ### Parse errors
 - Check CBL syntax against `../CBL/cbl_language.md`
 - Use `cblc parse` to see where parsing fails
-- Enable debug output: `OCAMLRUNPARAM=b cblc parse file.cbl`
+- Enable debug output: `OCAMLRUNPARAM=b cblc parse file.cblang`
 
 ### Build errors after changes
 ```bash
@@ -181,7 +181,7 @@ dune build
 ## Next Steps
 
 1. **Read the paper**: `../docs/cbl_overview.tex`
-2. **Study examples**: `../CBL/prototype/examples/*.cbl`
+2. **Study examples**: `../CBL/prototype/examples/*.cblang`
 3. **Language reference**: `../CBL/cbl_language.md`
 4. **Compiler spec**: `../CBL/cbl_compiler.md`
 5. **Implementation notes**: `IMPLEMENTATION.md`

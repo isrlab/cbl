@@ -60,10 +60,10 @@ The LLM participates only in requirements elicitation. All downstream reasoning,
 
 Two optional tools support authors and reviewers; neither is required to run the pipeline.
 
-- **vscode-cbl** — VS Code extension providing TextMate syntax highlighting for `.cbl` files and on-save diagnostics from `cblc check`. For spec authors who edit CBL directly.
+- **vscode-cbl** — VS Code extension providing TextMate syntax highlighting for `.cblang` files and on-save diagnostics from `cblc check`. For spec authors who edit CBL directly.
 - **.claude/skills** — Claude Code skills:
-  - `cbl-elicit` runs a structured discovery session that builds a `.cbl` file from a natural-language conversation, hiding the syntax from the user.
-  - `cbl-explain` produces plain-English summaries of `.cbl` files for stakeholders and certifiers who should not read CBL syntax.
+  - `cbl-elicit` runs a structured discovery session that builds a `.cblang` file from a natural-language conversation, hiding the syntax from the user.
+  - `cbl-explain` produces plain-English summaries of `.cblang` files for stakeholders and certifiers who should not read CBL syntax.
 
 ## Prerequisites
 
@@ -105,7 +105,7 @@ cbl-compiler/_build/default/bin/cblc.exe reason extracted_facts.json -o verdict.
 ### Run a specification pipeline (example)
 
 ```bash
-python -m cbl-elicit --input requirements.txt --output spec.cbl
+python -m cbl-elicit --input requirements.txt --output spec.cblang
 ```
 
 ## Repository Structure

@@ -3,7 +3,7 @@
 Three-layer architecture:
   Layer 1 (LLM):    NL requirements → extracted_facts.json
   Layer 2 (OCaml):  extracted_facts.json → verdict.json   (cblc reason)
-  Layer 3 (OCaml):  verdict.json → spec.cbl               (cblc ingest)
+  Layer 3 (OCaml):  verdict.json → spec.cblang               (cblc ingest)
 
 The session orchestrator manages the iteration protocol (§6 of the
 NLP-CBL interface contract), calling cblc as a subprocess with JSON files
@@ -330,7 +330,7 @@ class Session:
       Step 5:  Decision boundary (auto-apply or LLM-assisted).
       Step 6:  OCaml ingest → AST.
       Step 7:  OCaml checker validates.
-      Step 8:  Emit spec.cbl.
+      Step 8:  Emit spec.cblang.
     """
 
     def __init__(
@@ -374,7 +374,7 @@ class Session:
 
         Args:
             nl_text: Natural-language requirements text.
-            output_path: Where to write the final spec.cbl.
+            output_path: Where to write the final spec.cblang.
 
         Returns:
             SessionResult with success status and details.

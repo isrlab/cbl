@@ -4,7 +4,7 @@ VS Code language support for CBL (Controlled Behavioral Language).
 
 ## Features
 
-- Syntax highlighting for `.cbl` files (sections, modes, rule keywords, guards, actions, types, enums).
+- Syntax highlighting for `.cblang` files (sections, modes, rule keywords, guards, actions, types, enums).
 - Diagnostics from `cblc check` on save (parse errors, totality violations, guard completeness, etc.).
 - Configurable `cblc` path.
 
@@ -23,7 +23,7 @@ For local development, point `cbl.cblcPath` at the dune build artifact:
 
 1. Open this folder (`vscode-cbl/`) in VS Code.
 2. Press `F5` to launch the Extension Development Host.
-3. In the new window, open a `.cbl` file (e.g. `examples/traffic_light.cbl`).
+3. In the new window, open a `.cblang` file (e.g. `examples/traffic_light.cblang`).
 
 No build step is required — the extension is plain JavaScript with no dependencies.
 

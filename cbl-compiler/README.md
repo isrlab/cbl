@@ -5,7 +5,7 @@
 OCaml implementation of the CBL (Controlled Behavioral Language) compiler.
 
 **Architecture**:
-- **Frontend**: Python or user-written `.cbl` (LLM elicitation is decoupled)
+- **Frontend**: Python or user-written `.cblang` (LLM elicitation is decoupled)
 - **Compiler** (this project): OCaml (parse, check, lower) → writes `.json` IR
 - **Backend**: MATLAB (Stateflow API) or SCADE → reads `.json`, generates models
 
@@ -31,13 +31,13 @@ dune install
 
 ```bash
 # Check a CBL specification
-./_build/default/bin/cblc.exe check examples/traffic_basic.cbl
+./_build/default/bin/cblc.exe check examples/traffic_basic.cblang
 
 # Compile to JSON IR
-./_build/default/bin/cblc.exe compile examples/traffic_basic.cbl -o traffic.json
+./_build/default/bin/cblc.exe compile examples/traffic_basic.cblang -o traffic.json
 
 # Type check only
-./_build/default/bin/cblc.exe typecheck examples/traffic_basic.cbl
+./_build/default/bin/cblc.exe typecheck examples/traffic_basic.cblang
 ```
 
 ## Project Structure
@@ -57,7 +57,7 @@ cbl-compiler/
 ├── test/
 │   └── test_checker.ml  # Unit tests
 └── examples/
-    └── traffic_basic.cbl  # Example specifications
+    └── traffic_basic.cblang  # Example specifications
 ```
 
 ## References

@@ -5,7 +5,7 @@
 The compiler is structured in classic phases:
 
 ```
-.cbl file → Lexer → Parser → AST → Checker → Lowering → JSON IR
+.cblang file → Lexer → Parser → AST → Checker → Lowering → JSON IR
 ```
 
 ### 1. Lexer (`lexer.mll`)
@@ -117,13 +117,13 @@ make watch  # Auto-rebuild on changes
 
 ```bash
 # Check specification
-cblc check examples/traffic_basic.cbl
+cblc check examples/traffic_basic.cblang
 
 # Compile to JSON
-cblc compile examples/traffic_basic.cbl -o output.json
+cblc compile examples/traffic_basic.cblang -o output.json
 
 # Parse and show AST
-cblc parse examples/traffic_basic.cbl
+cblc parse examples/traffic_basic.cblang
 ```
 
 ## References

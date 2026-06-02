@@ -1,6 +1,6 @@
 """Gap 1 mitigation: Back-translation gate.
 
-After the pipeline produces a .cbl specification, a separate LLM pass renders
+After the pipeline produces a .cblang specification, a separate LLM pass renders
 it back to plain English. The engineer sees original requirements side-by-side
 with the back-translated specification. Discrepancies surface hallucinated or
 missing facts.
@@ -45,7 +45,7 @@ def render_cbl_to_english(cbl_text: str) -> str:
     translated to a plain-English sentence.
 
     Args:
-        cbl_text: The .cbl specification text.
+        cbl_text: The .cblang specification text.
 
     Returns:
         Structured English rendering of the specification.
@@ -304,7 +304,7 @@ def compare_requirements(
 
     Args:
         original_nl: The original natural-language requirements.
-        cbl_text: The generated .cbl specification text.
+        cbl_text: The generated .cblang specification text.
         back_translator: Optional LLM-based back-translator.
 
     Returns:

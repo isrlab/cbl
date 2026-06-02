@@ -15,14 +15,14 @@
       {
         "id": "cbl",
         "aliases": ["CBL", "Controlled Behavioral Language"],
-        "extensions": [".cbl"],
+        "extensions": [".cblang"],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "cbl",
-        "scopeName": "source.cbl",
+        "scopeName": "source.cblang",
         "path": "./syntaxes/cbl.tmLanguage.json"
       }
     ],

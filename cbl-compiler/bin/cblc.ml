@@ -29,10 +29,10 @@ let usage () =
   print_endline "CBL Compiler (OCaml implementation)";
   print_endline "";
   print_endline "Usage:";
-  print_endline "  cblc check <file.cbl>           Check well-posedness";
-  print_endline "  cblc compile <file.cbl> -o <out.json>  Compile to JSON IR";
-  print_endline "  cblc parse <file.cbl>           Parse and print AST";
-  print_endline "  cblc ingest <verdict.json> -o <spec.cbl>  Ingest verdict facts to CBL";
+  print_endline "  cblc check <file.cblang>           Check well-posedness";
+  print_endline "  cblc compile <file.cblang> -o <out.json>  Compile to JSON IR";
+  print_endline "  cblc parse <file.cblang>           Parse and print AST";
+  print_endline "  cblc ingest <verdict.json> -o <spec.cblang>  Ingest verdict facts to CBL";
   print_endline "  cblc ingest <verdict.json> --check-only   Validate only (exit 0/1)";
   print_endline "  cblc reason <extracted_facts.json> -o <verdict.json>  Run reasoning engine";
   print_endline "  cblc help                       Show this help";
