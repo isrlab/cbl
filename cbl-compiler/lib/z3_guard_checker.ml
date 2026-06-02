@@ -36,12 +36,21 @@ type z3_ctx = {
   (** Accumulated range and type constraints (e.g. 0 <= x <= 100). *)
   definitions : (string * predicate) list;
   (** Inline definitions available for expansion during guard translation. *)
+  streak_memo : (string, Z3.Expr.expr) Hashtbl.t;
+  (** Memoized opaque booleans for timing predicates, keyed by
+      (cycle-count expression, inner predicate). Lets PForNCycles(N, p)
+      and PForFewerCycles(N, p) share a boolean (with negation) so the
+      WP-1 checker can see them as complementary. Shared across all
+      invariants and all modes: a streak is a property of the signal's
+      history at a cycle, not of the current mode, so the same boolean
+      should be used everywhere the predicate appears. *)
   zctx : Z3.context;
 }
 
 let make_empty_ctx () =
   let zctx = Z3.mk_context [] in
-  { vars = []; constraints = []; definitions = []; zctx }
+  { vars = []; constraints = []; definitions = [];
+    streak_memo = Hashtbl.create 16; zctx }
 
 let add_var ctx name sort =
   let v = Z3.Expr.mk_const_s ctx.zctx name sort in
@@ -225,10 +234,36 @@ and pred_to_z3 ?(expanding=[]) (ctx : z3_ctx) (p : predicate) : Z3.Expr.expr opt
       (match pred_to_z3 ctx inner with
        | Some z -> Some (Z3.Boolean.mk_not zctx z)
        | None -> None)
-  (* Non-classical predicates: abstract as fresh unconstrained booleans.
-     This is sound but conservative: may emit false WP-1 warnings when
-     two modes' guards differ only in a temporal predicate. *)
-  | PForNCycles _ | PForFewerCycles _ | PDeviates _ | PAgrees _ | PIsOneOf _ ->
+  (* Timing predicates: memoize per (cycle-count, inner predicate) so that
+     PForNCycles(N, p) and PForFewerCycles(N, p) share the same opaque
+     boolean, with PForFewerCycles getting its negation. This lets the
+     WP-1 checker see them as complementary. Memo is shared across all
+     invariants and all modes (see [streak_memo] doc on z3_ctx). *)
+  | PForNCycles (n, inner) ->
+      let key = Printf.sprintf "streak(%s,%s)"
+        (Ast.show_expr n) (Ast.show_predicate inner) in
+      let b = match Hashtbl.find_opt ctx.streak_memo key with
+        | Some b -> b
+        | None ->
+            let b = fresh_bool zctx in
+            Hashtbl.add ctx.streak_memo key b;
+            b
+      in
+      Some b
+  | PForFewerCycles (n, inner) ->
+      let key = Printf.sprintf "streak(%s,%s)"
+        (Ast.show_expr n) (Ast.show_predicate inner) in
+      let b = match Hashtbl.find_opt ctx.streak_memo key with
+        | Some b -> b
+        | None ->
+            let b = fresh_bool zctx in
+            Hashtbl.add ctx.streak_memo key b;
+            b
+      in
+      Some (Z3.Boolean.mk_not zctx b)
+  (* Remaining non-classical predicates: abstract as fresh unconstrained
+     booleans (sound but conservative). *)
+  | PDeviates _ | PAgrees _ | PIsOneOf _ ->
       Some (fresh_bool zctx)
 
 (** Format a Z3 model as "x = v; y = w" for error messages. *)
@@ -348,6 +383,11 @@ let check_spec (spec : spec) : diagnostic list =
     | Some z -> add_constraint c z
     | None -> c
   ) ctx spec.always_invariants in
+  (* Note: streak_memo is intentionally NOT cleared between modes. A timing
+     predicate like "x is true for N consecutive cycles" is a property of the
+     signal's history at a given cycle, not of the current mode — semantically
+     it's the same boolean everywhere it appears. Sharing the memo across
+     invariants and all modes lets the WP-1/WP-2 solver connect them. *)
   List.concat_map (fun mode ->
     check_exclusivity ctx mode @ check_completeness ctx mode
   ) spec.modes
