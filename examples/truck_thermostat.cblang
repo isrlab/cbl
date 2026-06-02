@@ -1,0 +1,37 @@
+System TruckThermostat
+
+Assumes:
+  cabin_temperature is an integer signal
+  door_open is a boolean signal
+  setpoint is an integer signal
+
+Constants:
+  hysteresis : integer = 2
+  door_alarm_cycles : integer = 2
+
+Guarantees:
+  cooling_unit : boolean
+  fan : boolean
+  alarm : boolean [default: false]
+
+Initial Mode: Holding
+
+Mode Holding:
+  When door_open is true for door_alarm_cycles consecutive cycles and cabin_temperature exceeds (setpoint + hysteresis), shall set cooling_unit to true, set fan to true, set alarm to true, transition to Cooling.
+  When door_open is true for door_alarm_cycles consecutive cycles and cabin_temperature is below (setpoint - hysteresis), shall set cooling_unit to false, set fan to true, set alarm to true, transition to Heating.
+  When door_open is true for door_alarm_cycles consecutive cycles and (not cabin_temperature exceeds (setpoint + hysteresis)) and (not cabin_temperature is below (setpoint - hysteresis)), shall set cooling_unit to false, set fan to false, set alarm to true, remain in current.
+  When door_open is true for fewer than door_alarm_cycles consecutive cycles and cabin_temperature exceeds (setpoint + hysteresis), shall set cooling_unit to true, set fan to true, transition to Cooling.
+  When door_open is true for fewer than door_alarm_cycles consecutive cycles and cabin_temperature is below (setpoint - hysteresis), shall set cooling_unit to false, set fan to true, transition to Heating.
+  Otherwise, shall set cooling_unit to false, set fan to false, remain in current.
+
+Mode Cooling:
+  When door_open is true for door_alarm_cycles consecutive cycles and cabin_temperature is below setpoint, shall set cooling_unit to false, set fan to false, set alarm to true, transition to Holding.
+  When door_open is true for door_alarm_cycles consecutive cycles and (not cabin_temperature is below setpoint), shall set cooling_unit to true, set fan to true, set alarm to true, remain in current.
+  When door_open is true for fewer than door_alarm_cycles consecutive cycles and cabin_temperature is below setpoint, shall set cooling_unit to false, set fan to false, transition to Holding.
+  Otherwise, shall set cooling_unit to true, set fan to true, remain in current.
+
+Mode Heating:
+  When door_open is true for door_alarm_cycles consecutive cycles and cabin_temperature exceeds setpoint, shall set cooling_unit to false, set fan to false, set alarm to true, transition to Holding.
+  When door_open is true for door_alarm_cycles consecutive cycles and (not cabin_temperature exceeds setpoint), shall set cooling_unit to false, set fan to true, set alarm to true, remain in current.
+  When door_open is true for fewer than door_alarm_cycles consecutive cycles and cabin_temperature exceeds setpoint, shall set cooling_unit to false, set fan to false, transition to Holding.
+  Otherwise, shall set cooling_unit to false, set fan to true, remain in current.

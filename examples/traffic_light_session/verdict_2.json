@@ -1,0 +1,174 @@
+{
+  "committed_facts": {
+    "always_invariants": [],
+    "assumes": [
+      {"atype":"boolean","name":"timer_expired","provenance":"user_stated"},
+      {
+	"atype":"boolean",
+	"name":"pedestrian_request",
+	"provenance":"user_stated"
+      }
+    ],
+    "constants": [
+      {
+	"ctype":"integer",
+	"cvalue":30,
+	"name":"cycle_time",
+	"provenance":"user_stated"
+      }
+    ],
+    "definitions": [],
+    "guarantees": [
+      {
+	"default": {"provenance":"user_stated","value": {"kind":"hold"}},
+	"gtype":"{red, yellow, green}",
+	"name":"light_color",
+	"provenance":"user_stated"
+      },
+      {
+	"default": {"provenance":"user_stated","value": {"kind":"hold"}},
+	"gtype":"boolean",
+	"name":"walk_signal",
+	"provenance":"user_stated"
+      }
+    ],
+    "initial_mode": {"provenance":"user_confirmed","value":"Green"},
+    "modes": [
+      {
+	"entry_actions": [],
+	"invariants": [],
+	"name":"Green",
+	"provenance":"user_stated",
+	"transitions": [
+	  {
+	    "actions": [
+	      {
+		"kind":"set",
+		"name":"light_color",
+		"value": {"kind":"string","value":"yellow"}
+	      },
+	      {
+		"kind":"set",
+		"name":"walk_signal",
+		"value": {"kind":"bool","value":false}
+	      }
+	    ],
+	    "guard": {
+	      "when": {
+		"expr": {"kind":"var","name":"timer_expired"},
+		"kind":"is_true"
+	      }
+	    },
+	    "target": {"transition_to":"Yellow"}
+	  },
+	  {
+	    "actions": [],
+	    "guard": {"otherwise":true},
+	    "target": {"remain":true}
+	  }
+	]
+      },
+      {
+	"entry_actions": [],
+	"invariants": [],
+	"name":"Yellow",
+	"provenance":"user_stated",
+	"transitions": [
+	  {
+	    "actions": [
+	      {
+		"kind":"set",
+		"name":"light_color",
+		"value": {"kind":"string","value":"red"}
+	      },
+	      {
+		"kind":"set",
+		"name":"walk_signal",
+		"value": {"kind":"bool","value":true}
+	      }
+	    ],
+	    "guard": {
+	      "when": {
+		"expr": {"kind":"var","name":"timer_expired"},
+		"kind":"is_true"
+	      }
+	    },
+	    "target": {"transition_to":"Red"}
+	  },
+	  {
+	    "actions": [],
+	    "guard": {"otherwise":true},
+	    "target": {"remain":true}
+	  }
+	]
+      },
+      {
+	"entry_actions": [],
+	"invariants": [],
+	"name":"Red",
+	"provenance":"user_stated",
+	"transitions": [
+	  {
+	    "actions": [
+	      {
+		"kind":"set",
+		"name":"light_color",
+		"value": {"kind":"string","value":"green"}
+	      },
+	      {
+		"kind":"set",
+		"name":"walk_signal",
+		"value": {"kind":"bool","value":false}
+	      }
+	    ],
+	    "guard": {
+	      "when": {
+		"expr": {"kind":"var","name":"timer_expired"},
+		"kind":"is_true"
+	      }
+	    },
+	    "target": {"transition_to":"Green"}
+	  },
+	  {
+	    "actions": [],
+	    "guard": {"otherwise":true},
+	    "target": {"remain":true}
+	  }
+	]
+      }
+    ],
+    "schema_version":"0.1",
+    "system_name":"TrafficLightController",
+    "variables": []
+  },
+  "diagnostics": [
+    {
+      "code":"unused",
+      "location": {"kind":"assume","name":"pedestrian_request","transition_idx":null},
+      "message":"assume 'pedestrian_request' is declared but never referenced",
+      "severity":"warning"
+    },
+    {
+      "code":"unused",
+      "location": {"kind":"constant","name":"cycle_time","transition_idx":null},
+      "message":"constant 'cycle_time' is declared but never referenced",
+      "severity":"warning"
+    }
+  ],
+  "pending_facts": {
+    "always_invariants": [],
+    "assumes": [],
+    "constants": [],
+    "definitions": [],
+    "guarantees": [],
+    "initial_mode":null,
+    "modes": [],
+    "schema_version":"0.1",
+    "system_name":null,
+    "variables": []
+  },
+  "questions": [],
+  "repairs": [],
+  "schema_version":"0.1",
+  "status":"pass"
+}

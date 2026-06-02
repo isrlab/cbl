@@ -1,0 +1,25 @@
+A traffic light controller manages an intersection.
+
+The system reads two boolean inputs: timer_expired (from a hardware timer)
+and pedestrian_request (from a crosswalk button).
+
+It controls two outputs:
+  - light_color, which can be red, yellow, or green
+  - walk_signal, a boolean that tells pedestrians whether to walk
+
+The controller has three modes: Green, Yellow, and Red.
+It starts in Green mode.
+
+In Green mode, when the timer expires, the light turns yellow and
+the walk signal is turned off, then it transitions to Yellow mode.
+Otherwise it stays green.
+
+In Yellow mode, when the timer expires, the light turns red and
+the walk signal is activated, then it transitions to Red mode.
+Otherwise it stays yellow.
+
+In Red mode, when the timer expires, the light turns green and
+the walk signal is turned off, then it transitions back to Green mode.
+Otherwise it stays red with the walk signal on.
+
+The cycle_time constant is 30 seconds.

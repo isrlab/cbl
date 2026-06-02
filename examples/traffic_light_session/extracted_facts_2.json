@@ -1,0 +1,325 @@
+{
+  "schema_version": "0.1",
+  "provenance_attested": true,
+  "system_name": {
+    "value": "TrafficLightController",
+    "provenance": "user_confirmed",
+    "source": "A traffic light controller manages an intersection."
+  },
+  "assumes": [
+    {
+      "name": {
+        "value": "timer_expired",
+        "provenance": "user_stated",
+        "source": "The system reads two boolean inputs: timer_expired (from a hardware timer)"
+      },
+      "atype": {
+        "value": "boolean",
+        "provenance": "user_stated"
+      },
+      "constraint": {
+        "value": null,
+        "provenance": "user_stated"
+      },
+      "source": "The system reads two boolean inputs: timer_expired (from a hardware timer)"
+    },
+    {
+      "name": {
+        "value": "pedestrian_request",
+        "provenance": "user_stated",
+        "source": "and pedestrian_request (from a crosswalk button)."
+      },
+      "atype": {
+        "value": "boolean",
+        "provenance": "user_stated"
+      },
+      "constraint": {
+        "value": null,
+        "provenance": "user_stated"
+      },
+      "source": "and pedestrian_request (from a crosswalk button)."
+    }
+  ],
+  "definitions": [],
+  "constants": [
+    {
+      "name": {
+        "value": "cycle_time",
+        "provenance": "user_stated",
+        "source": "The cycle_time constant is 30 seconds."
+      },
+      "ctype": {
+        "value": "integer",
+        "provenance": "user_stated"
+      },
+      "cvalue": {
+        "value": 30,
+        "provenance": "user_stated"
+      },
+      "source": "The cycle_time constant is 30 seconds."
+    }
+  ],
+  "guarantees": [
+    {
+      "name": {
+        "value": "light_color",
+        "provenance": "user_stated",
+        "source": "It controls two outputs: - light_color, which can be red, yellow, or green"
+      },
+      "gtype": {
+        "value": "{red, yellow, green}",
+        "provenance": "user_stated"
+      },
+      "default": {
+        "value": {
+          "kind": "hold",
+          "value": null
+        },
+        "provenance": "user_stated"
+      },
+      "source": "It controls two outputs: - light_color, which can be red, yellow, or green"
+    },
+    {
+      "name": {
+        "value": "walk_signal",
+        "provenance": "user_stated",
+        "source": "walk_signal, a boolean that tells pedestrians whether to walk"
+      },
+      "gtype": {
+        "value": "boolean",
+        "provenance": "user_stated"
+      },
+      "default": {
+        "value": {
+          "kind": "hold",
+          "value": null
+        },
+        "provenance": "user_stated"
+      },
+      "source": "walk_signal, a boolean that tells pedestrians whether to walk"
+    }
+  ],
+  "variables": [],
+  "always_invariants": [],
+  "initial_mode": {
+    "value": "Green",
+    "provenance": "user_confirmed",
+    "source": "It starts in Green mode."
+  },
+  "modes": [
+    {
+      "name": {
+        "value": "Green",
+        "provenance": "user_stated",
+        "source": "The controller has three modes: Green, Yellow, and Red."
+      },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": {
+            "value": {
+              "when": {
+                "kind": "is_true",
+                "expr": {
+                  "kind": "var",
+                  "name": "timer_expired"
+                }
+              }
+            },
+            "provenance": "user_confirmed"
+          },
+          "actions": [
+            {
+              "kind": "set",
+              "name": "light_color",
+              "value": {
+                "kind": "string",
+                "value": "yellow"
+              },
+              "provenance": "user_confirmed",
+              "source": "In Green mode, when the timer expires, the light turns yellow"
+            },
+            {
+              "kind": "set",
+              "name": "walk_signal",
+              "value": {
+                "kind": "bool",
+                "value": false
+              },
+              "provenance": "user_confirmed",
+              "source": "and the walk signal is turned off"
+            }
+          ],
+          "target": {
+            "value": {
+              "transition_to": "Yellow"
+            },
+            "provenance": "user_confirmed"
+          },
+          "source": "then it transitions to Yellow mode."
+        },
+        {
+          "guard": {
+            "value": {
+              "otherwise": true
+            },
+            "provenance": "user_confirmed"
+          },
+          "actions": [],
+          "target": {
+            "value": {
+              "remain": true
+            },
+            "provenance": "user_confirmed"
+          },
+          "source": "Otherwise it stays green."
+        }
+      ],
+      "source": "In Green mode, when the timer expires, the light turns yellow and the walk signal is turned off, then it transitions to Yellow mode. Otherwise it stays green."
+    },
+    {
+      "name": {
+        "value": "Yellow",
+        "provenance": "user_stated",
+        "source": "The controller has three modes: Green, Yellow, and Red."
+      },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": {
+            "value": {
+              "when": {
+                "kind": "is_true",
+                "expr": {
+                  "kind": "var",
+                  "name": "timer_expired"
+                }
+              }
+            },
+            "provenance": "user_confirmed"
+          },
+          "actions": [
+            {
+              "kind": "set",
+              "name": "light_color",
+              "value": {
+                "kind": "string",
+                "value": "red"
+              },
+              "provenance": "user_confirmed",
+              "source": "In Yellow mode, when the timer expires, the light turns red"
+            },
+            {
+              "kind": "set",
+              "name": "walk_signal",
+              "value": {
+                "kind": "bool",
+                "value": true
+              },
+              "provenance": "user_confirmed",
+              "source": "and the walk signal is activated"
+            }
+          ],
+          "target": {
+            "value": {
+              "transition_to": "Red"
+            },
+            "provenance": "user_confirmed"
+          },
+          "source": "then it transitions to Red mode."
+        },
+        {
+          "guard": {
+            "value": {
+              "otherwise": true
+            },
+            "provenance": "user_confirmed"
+          },
+          "actions": [],
+          "target": {
+            "value": {
+              "remain": true
+            },
+            "provenance": "user_confirmed"
+          },
+          "source": "Otherwise it stays yellow."
+        }
+      ],
+      "source": "In Yellow mode, when the timer expires, the light turns red and the walk signal is activated, then it transitions to Red mode. Otherwise it stays yellow."
+    },
+    {
+      "name": {
+        "value": "Red",
+        "provenance": "user_stated",
+        "source": "The controller has three modes: Green, Yellow, and Red."
+      },
+      "entry_actions": [],
+      "invariants": [],
+      "transitions": [
+        {
+          "guard": {
+            "value": {
+              "when": {
+                "kind": "is_true",
+                "expr": {
+                  "kind": "var",
+                  "name": "timer_expired"
+                }
+              }
+            },
+            "provenance": "user_confirmed"
+          },
+          "actions": [
+            {
+              "kind": "set",
+              "name": "light_color",
+              "value": {
+                "kind": "string",
+                "value": "green"
+              },
+              "provenance": "user_confirmed",
+              "source": "In Red mode, when the timer expires, the light turns green"
+            },
+            {
+              "kind": "set",
+              "name": "walk_signal",
+              "value": {
+                "kind": "bool",
+                "value": false
+              },
+              "provenance": "user_confirmed",
+              "source": "and the walk signal is turned off"
+            }
+          ],
+          "target": {
+            "value": {
+              "transition_to": "Green"
+            },
+            "provenance": "user_confirmed"
+          },
+          "source": "then it transitions back to Green mode."
+        },
+        {
+          "guard": {
+            "value": {
+              "otherwise": true
+            },
+            "provenance": "user_confirmed"
+          },
+          "actions": [],
+          "target": {
+            "value": {
+              "remain": true
+            },
+            "provenance": "user_confirmed"
+          },
+          "source": "Otherwise it stays red with the walk signal on."
+        }
+      ],
+      "source": "In Red mode, when the timer expires, the light turns green and the walk signal is turned off, then it transitions back to Green mode. Otherwise it stays red with the walk signal on."
+    }
+  ],
+  "open_questions": []
+}

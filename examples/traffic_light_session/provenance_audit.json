@@ -1,0 +1,622 @@
+[
+  {
+    "timestamp": 1775107816.772167,
+    "iteration": 1,
+    "fact_kind": "system_name",
+    "fact_name": "traffic_light_controller",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7721841,
+    "iteration": 1,
+    "fact_kind": "initial_mode",
+    "fact_name": "Green",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772205,
+    "iteration": 1,
+    "fact_kind": "assume",
+    "fact_name": "timer_expired",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772214,
+    "iteration": 1,
+    "fact_kind": "assume",
+    "fact_name": "pedestrian_request",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772223,
+    "iteration": 1,
+    "fact_kind": "guarantee",
+    "fact_name": "light_color",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7722292,
+    "iteration": 1,
+    "fact_kind": "guarantee",
+    "fact_name": "walk_signal",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772237,
+    "iteration": 1,
+    "fact_kind": "constant",
+    "fact_name": "cycle_time",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772243,
+    "iteration": 1,
+    "fact_kind": "mode",
+    "fact_name": "Green",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772251,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Green_1:light_color",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772255,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Green_1:walk_signal",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772258,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Green_1",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772264,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Green_2:light_color",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772267,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Green_2:walk_signal",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.77227,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Green_2",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772275,
+    "iteration": 1,
+    "fact_kind": "mode",
+    "fact_name": "Yellow",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7722812,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Yellow_1:light_color",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7722838,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Yellow_1:walk_signal",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772287,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_1",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7722921,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Yellow_2:light_color",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772295,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Yellow_2:walk_signal",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772298,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_2",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7723022,
+    "iteration": 1,
+    "fact_kind": "mode",
+    "fact_name": "Red",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772307,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Red_1:light_color",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.77231,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Red_1:walk_signal",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772313,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Red_1",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772317,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Red_2:light_color",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.772321,
+    "iteration": 1,
+    "fact_kind": "action",
+    "fact_name": "Red_2:walk_signal",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.7723231,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Red_2",
+    "source": "llm_response",
+    "provenance": "llm_inferred",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.8299131,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Green_1",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.829927,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Green_2",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.829932,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_1",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.829935,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_2",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.829938,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Red_1",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.82994,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Red_2",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.8300219,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Green_1",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.8300312,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Green_2",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.830036,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_1",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.83004,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_2",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.830045,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Red_1",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107816.830049,
+    "iteration": 1,
+    "fact_kind": "transition",
+    "fact_name": "Red_2",
+    "source": "engineer_confirmation",
+    "provenance": "user_confirmed",
+    "confirmed": true,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1133142,
+    "iteration": 2,
+    "fact_kind": "system_name",
+    "fact_name": "TrafficLightController",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113326,
+    "iteration": 2,
+    "fact_kind": "initial_mode",
+    "fact_name": "Green",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113348,
+    "iteration": 2,
+    "fact_kind": "assume",
+    "fact_name": "timer_expired",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113356,
+    "iteration": 2,
+    "fact_kind": "assume",
+    "fact_name": "pedestrian_request",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113365,
+    "iteration": 2,
+    "fact_kind": "guarantee",
+    "fact_name": "light_color",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1133718,
+    "iteration": 2,
+    "fact_kind": "guarantee",
+    "fact_name": "walk_signal",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1133811,
+    "iteration": 2,
+    "fact_kind": "constant",
+    "fact_name": "cycle_time",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1133912,
+    "iteration": 2,
+    "fact_kind": "mode",
+    "fact_name": "Green",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1134012,
+    "iteration": 2,
+    "fact_kind": "action",
+    "fact_name": "Green_1:light_color",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113405,
+    "iteration": 2,
+    "fact_kind": "action",
+    "fact_name": "Green_1:walk_signal",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113408,
+    "iteration": 2,
+    "fact_kind": "transition",
+    "fact_name": "Green_1",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1134138,
+    "iteration": 2,
+    "fact_kind": "transition",
+    "fact_name": "Green_2",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113419,
+    "iteration": 2,
+    "fact_kind": "mode",
+    "fact_name": "Yellow",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113426,
+    "iteration": 2,
+    "fact_kind": "action",
+    "fact_name": "Yellow_1:light_color",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.11343,
+    "iteration": 2,
+    "fact_kind": "action",
+    "fact_name": "Yellow_1:walk_signal",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1134331,
+    "iteration": 2,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_1",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113438,
+    "iteration": 2,
+    "fact_kind": "transition",
+    "fact_name": "Yellow_2",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1134431,
+    "iteration": 2,
+    "fact_kind": "mode",
+    "fact_name": "Red",
+    "source": "llm_response",
+    "provenance": "user_stated",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.11345,
+    "iteration": 2,
+    "fact_kind": "action",
+    "fact_name": "Red_1:light_color",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.1134531,
+    "iteration": 2,
+    "fact_kind": "action",
+    "fact_name": "Red_1:walk_signal",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113457,
+    "iteration": 2,
+    "fact_kind": "transition",
+    "fact_name": "Red_1",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  },
+  {
+    "timestamp": 1775107830.113462,
+    "iteration": 2,
+    "fact_kind": "transition",
+    "fact_name": "Red_2",
+    "source": "llm_response",
+    "provenance": "user_confirmed",
+    "confirmed": false,
+    "detail": ""
+  }
+]
