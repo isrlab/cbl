@@ -26,3 +26,6 @@ cbl-compiler/_build/
 *.toc
 *.fdb_latexmk
 *.fls
+
+# skills live in the central raktim/claude-skills repo (symlinked in)
+.claude/skills/
